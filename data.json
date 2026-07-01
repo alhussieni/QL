@@ -1,0 +1,1502 @@
+{
+  "meta": {
+    "companyName": "الأصل للطاقة الشمسية",
+    "currency": "جنيه مصري",
+    "currencySymbol": "ج.م",
+    "lastUpdated": "2026-07-01"
+  },
+  "panels": [
+    {
+      "brand": "Katron",
+      "power": 275,
+      "vimp": 31.2,
+      "voc": 38.1,
+      "iimp": 8.82,
+      "isc": 9.27,
+      "price": null
+    },
+    {
+      "brand": "JA",
+      "power": 415,
+      "vimp": 42.18,
+      "voc": 50.41,
+      "iimp": 9.84,
+      "isc": 10.51,
+      "price": null
+    },
+    {
+      "brand": "JA",
+      "power": 450,
+      "vimp": 42.11,
+      "voc": 50.33,
+      "iimp": 10.69,
+      "isc": 11.42,
+      "price": null
+    },
+    {
+      "brand": "JA",
+      "power": 455,
+      "vimp": 41.82,
+      "voc": 49.85,
+      "iimp": 10.88,
+      "isc": 11.41,
+      "price": null
+    },
+    {
+      "brand": "JA",
+      "power": 540,
+      "vimp": 41.64,
+      "voc": 49.6,
+      "iimp": 12.97,
+      "isc": 13.86,
+      "price": null
+    },
+    {
+      "brand": "JA",
+      "power": 545,
+      "vimp": 41.8,
+      "voc": 49.75,
+      "iimp": 13.04,
+      "isc": 13.93,
+      "price": null
+    },
+    {
+      "brand": "JA",
+      "power": 550,
+      "vimp": 41.96,
+      "voc": 49.9,
+      "iimp": 13.11,
+      "isc": 14,
+      "price": null
+    },
+    {
+      "brand": "JA",
+      "power": 600,
+      "vimp": 39.44,
+      "voc": 47.7,
+      "iimp": 15.21,
+      "isc": 15.95,
+      "price": null
+    },
+    {
+      "brand": "JA",
+      "power": 605,
+      "vimp": 39.9,
+      "voc": 47.9,
+      "iimp": 15.28,
+      "isc": 16,
+      "price": null
+    },
+    {
+      "brand": "JA",
+      "power": 615,
+      "vimp": 39.96,
+      "voc": 48.3,
+      "iimp": 15.39,
+      "isc": 16.1,
+      "price": null
+    },
+    {
+      "brand": "JA",
+      "power": 620,
+      "vimp": 39.96,
+      "voc": 48.3,
+      "iimp": 15.39,
+      "isc": 16.1,
+      "price": 8.3
+    },
+    {
+      "brand": "JA",
+      "power": 625,
+      "vimp": 39.96,
+      "voc": 48.3,
+      "iimp": 15.39,
+      "isc": 16.1,
+      "price": null
+    },
+    {
+      "brand": "suntech",
+      "power": 540,
+      "vimp": 41.75,
+      "voc": 49.54,
+      "iimp": 12.94,
+      "isc": 13.89,
+      "price": null
+    },
+    {
+      "brand": "suntech",
+      "power": 555,
+      "vimp": 42.24,
+      "voc": 50.07,
+      "iimp": 13.14,
+      "isc": 14.07,
+      "price": null
+    },
+    {
+      "brand": "JINKO",
+      "power": 405,
+      "vimp": 30.52,
+      "voc": 37.06,
+      "iimp": 13.27,
+      "isc": 13.85,
+      "price": null
+    },
+    {
+      "brand": "JINKO",
+      "power": 450,
+      "vimp": 33.91,
+      "voc": 41.18,
+      "iimp": 13.27,
+      "isc": 13.85,
+      "price": null
+    },
+    {
+      "brand": "JINKO",
+      "power": 470,
+      "vimp": 43.28,
+      "voc": 52.14,
+      "iimp": 10.86,
+      "isc": 11.68,
+      "price": null
+    },
+    {
+      "brand": "JINKO",
+      "power": 475,
+      "vimp": 43.28,
+      "voc": 52.14,
+      "iimp": 10.86,
+      "isc": 11.68,
+      "price": 8.4
+    },
+    {
+      "brand": "JINKO",
+      "power": 465,
+      "vimp": 43.18,
+      "voc": 51.92,
+      "iimp": 10.77,
+      "isc": 11.59,
+      "price": null
+    },
+    {
+      "brand": "JINKO",
+      "power": 600,
+      "vimp": 40.46,
+      "voc": 48.88,
+      "iimp": 15.15,
+      "isc": 16.02,
+      "price": null
+    },
+    {
+      "brand": "JINKO",
+      "power": 610,
+      "vimp": 40.46,
+      "voc": 48.88,
+      "iimp": 15.15,
+      "isc": 16.02,
+      "price": null
+    },
+    {
+      "brand": "JINKO",
+      "power": 615,
+      "vimp": 40.46,
+      "voc": 48.88,
+      "iimp": 15.15,
+      "isc": 16.02,
+      "price": null
+    },
+    {
+      "brand": "JINKO",
+      "power": 620,
+      "vimp": 40.74,
+      "voc": 49.08,
+      "iimp": 15.22,
+      "isc": 16.08,
+      "price": 8.5
+    },
+    {
+      "brand": "JINKO",
+      "power": 710,
+      "vimp": 40.65,
+      "voc": 48.73,
+      "iimp": 17.47,
+      "isc": 18.53,
+      "price": null
+    },
+    {
+      "brand": "JINKO",
+      "power": 720,
+      "vimp": 40.89,
+      "voc": 49.04,
+      "iimp": 17.76,
+      "isc": 18.88,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 540,
+      "vimp": 31.4,
+      "voc": 37.7,
+      "iimp": 17.21,
+      "isc": 18.3,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 450,
+      "vimp": 44.6,
+      "voc": 52.9,
+      "iimp": 10.09,
+      "isc": 10.77,
+      "price": 8.5
+    },
+    {
+      "brand": "TRINA",
+      "power": 550,
+      "vimp": 31.8,
+      "voc": 38.1,
+      "iimp": 17.29,
+      "isc": 18.39,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 580,
+      "vimp": 44.2,
+      "voc": 52.2,
+      "iimp": 13.13,
+      "isc": 13.77,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 585,
+      "vimp": 44.4,
+      "voc": 52.4,
+      "iimp": 13.18,
+      "isc": 13.82,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 590,
+      "vimp": 44.4,
+      "voc": 52.4,
+      "iimp": 13.18,
+      "isc": 13.82,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 600,
+      "vimp": 34.4,
+      "voc": 41.5,
+      "iimp": 17.44,
+      "isc": 18.52,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 610,
+      "vimp": 40.8,
+      "voc": 49,
+      "iimp": 14.96,
+      "isc": 15.86,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 615,
+      "vimp": 41.1,
+      "voc": 49.3,
+      "iimp": 14.98,
+      "isc": 15.89,
+      "price": 8
+    },
+    {
+      "brand": "TRINA",
+      "power": 620,
+      "vimp": 41.4,
+      "voc": 49.6,
+      "iimp": 14.99,
+      "isc": 15.91,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 625,
+      "vimp": 41.7,
+      "voc": 49.9,
+      "iimp": 15,
+      "isc": 15.92,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 650,
+      "vimp": 37.4,
+      "voc": 45.3,
+      "iimp": 17.39,
+      "isc": 18.44,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 655,
+      "vimp": 37.6,
+      "voc": 45.5,
+      "iimp": 17.43,
+      "isc": 18.48,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 660,
+      "vimp": 37.8,
+      "voc": 45.7,
+      "iimp": 17.47,
+      "isc": 18.53,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 665,
+      "vimp": 38,
+      "voc": 45.9,
+      "iimp": 17.51,
+      "isc": 18.57,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 675,
+      "vimp": 39.4,
+      "voc": 47.2,
+      "iimp": 17.12,
+      "isc": 18.14,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 700,
+      "vimp": 40.5,
+      "voc": 48.6,
+      "iimp": 17.29,
+      "isc": 18.32,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 705,
+      "vimp": 40.7,
+      "voc": 48.8,
+      "iimp": 17.33,
+      "isc": 18.36,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 710,
+      "vimp": 40.9,
+      "voc": 49,
+      "iimp": 17.36,
+      "isc": 18.4,
+      "price": 8.3
+    },
+    {
+      "brand": "TRINA",
+      "power": 715,
+      "vimp": 41.1,
+      "voc": 49.2,
+      "iimp": 17.4,
+      "isc": 18.44,
+      "price": null
+    },
+    {
+      "brand": "TRINA",
+      "power": 720,
+      "vimp": 41.3,
+      "voc": 49.4,
+      "iimp": 17.44,
+      "isc": 18.49,
+      "price": null
+    },
+    {
+      "brand": "TRINA_TallMax",
+      "power": 550,
+      "vimp": 41.6,
+      "voc": 49.8,
+      "iimp": 13.21,
+      "isc": 14.02,
+      "price": null
+    },
+    {
+      "brand": "TRINA_TallMax",
+      "power": 555,
+      "vimp": 41.9,
+      "voc": 50,
+      "iimp": 13.25,
+      "isc": 14.07,
+      "price": null
+    },
+    {
+      "brand": "RISEN",
+      "power": 530,
+      "vimp": 31.06,
+      "voc": 37.38,
+      "iimp": 17.07,
+      "isc": 18.08,
+      "price": null
+    },
+    {
+      "brand": "RISEN",
+      "power": 550,
+      "vimp": 31.86,
+      "voc": 38.24,
+      "iimp": 17.27,
+      "isc": 18.28,
+      "price": null
+    },
+    {
+      "brand": "RISEN",
+      "power": 630,
+      "vimp": 46.98,
+      "voc": 56.2,
+      "iimp": 13.42,
+      "isc": 14.28,
+      "price": null
+    },
+    {
+      "brand": "RISEN",
+      "power": 700,
+      "vimp": 41.78,
+      "voc": 49.83,
+      "iimp": 16.77,
+      "isc": 17.82,
+      "price": null
+    },
+    {
+      "brand": "RISEN",
+      "power": 710,
+      "vimp": 41.93,
+      "voc": 50.01,
+      "iimp": 16.95,
+      "isc": 18,
+      "price": null
+    },
+    {
+      "brand": "RISEN",
+      "power": 540,
+      "vimp": 31.46,
+      "voc": 37.78,
+      "iimp": 17.17,
+      "isc": 18.18,
+      "price": null
+    },
+    {
+      "brand": "Canadian",
+      "power": 455,
+      "vimp": 34.2,
+      "voc": 40.8,
+      "iimp": 13.03,
+      "isc": 13.86,
+      "price": null
+    },
+    {
+      "brand": "Canadian",
+      "power": 550,
+      "vimp": 41.7,
+      "voc": 49.6,
+      "iimp": 13.2,
+      "isc": 14,
+      "price": null
+    },
+    {
+      "brand": "Canadian",
+      "power": 665,
+      "vimp": 38.5,
+      "voc": 45.6,
+      "iimp": 17.28,
+      "isc": 18.51,
+      "price": null
+    },
+    {
+      "brand": "Canadian",
+      "power": 670,
+      "vimp": 38.7,
+      "voc": 45.8,
+      "iimp": 17.32,
+      "isc": 18.55,
+      "price": null
+    },
+    {
+      "brand": "Tongwei",
+      "power": 550,
+      "vimp": 41.05,
+      "voc": 49.71,
+      "iimp": 13.33,
+      "isc": 13.92,
+      "price": null
+    },
+    {
+      "brand": "Tongwei",
+      "power": 555,
+      "vimp": 41.45,
+      "voc": 50.11,
+      "iimp": 13.39,
+      "isc": 13.96,
+      "price": null
+    },
+    {
+      "brand": "Tongwei",
+      "power": 560,
+      "vimp": 41.65,
+      "voc": 50.31,
+      "iimp": 13.45,
+      "isc": 14,
+      "price": null
+    },
+    {
+      "brand": "Tongwei",
+      "power": 610,
+      "vimp": 41.35,
+      "voc": 48.1,
+      "iimp": 14.88,
+      "isc": 15.9,
+      "price": 7.7
+    },
+    {
+      "brand": "Tongwei",
+      "power": 615,
+      "vimp": 41.35,
+      "voc": 48.1,
+      "iimp": 14.88,
+      "isc": 15.9,
+      "price": null
+    },
+    {
+      "brand": "Tongwei",
+      "power": 625,
+      "vimp": 41.35,
+      "voc": 48.1,
+      "iimp": 14.88,
+      "isc": 15.9,
+      "price": null
+    },
+    {
+      "brand": "Tongwei",
+      "power": 620,
+      "vimp": 41.55,
+      "voc": 48.3,
+      "iimp": 14.93,
+      "isc": 15.95,
+      "price": null
+    },
+    {
+      "brand": "Tongwei",
+      "power": 715,
+      "vimp": 40.86,
+      "voc": 49.11,
+      "iimp": 17.5,
+      "isc": 18.5,
+      "price": null
+    },
+    {
+      "brand": "Tongwei",
+      "power": 710,
+      "vimp": 40.69,
+      "voc": 48.94,
+      "iimp": 17.45,
+      "isc": 18.45,
+      "price": null
+    },
+    {
+      "brand": "Tongwei",
+      "power": 590,
+      "vimp": 44.27,
+      "voc": 52.7,
+      "iimp": 13.33,
+      "isc": 13.95,
+      "price": null
+    },
+    {
+      "brand": "Ulica",
+      "power": 710,
+      "vimp": 40.84,
+      "voc": 48.82,
+      "iimp": 17.38,
+      "isc": 18.4,
+      "price": null
+    },
+    {
+      "brand": "aiko",
+      "power": 645,
+      "vimp": null,
+      "voc": null,
+      "iimp": null,
+      "isc": null,
+      "price": 7.75
+    },
+    {
+      "brand": "astro",
+      "power": 610,
+      "vimp": null,
+      "voc": null,
+      "iimp": null,
+      "isc": null,
+      "price": 7.7
+    },
+    {
+      "brand": "astro",
+      "power": 615,
+      "vimp": null,
+      "voc": null,
+      "iimp": null,
+      "isc": null,
+      "price": 8.1
+    }
+  ],
+  "inverter": {
+    "discounts": {
+      "VEICHI": 0.22,
+      "Delixi": 0.41,
+      "SAJ": 0.2,
+      "SIS": 0.3,
+      "FRACON": 0.28
+    },
+    "models": [
+      {
+        "brand": "VEICHI",
+        "kw": 4,
+        "hp": 5.5,
+        "listPrice": 10300
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 5.5,
+        "hp": 7.5,
+        "listPrice": 11800
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 7.5,
+        "hp": 10,
+        "listPrice": 15000
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 10,
+        "hp": 15,
+        "listPrice": 19900
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 15,
+        "hp": 20,
+        "listPrice": 23800
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 18.5,
+        "hp": 25,
+        "listPrice": 30000
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 22,
+        "hp": 30,
+        "listPrice": 35500
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 30,
+        "hp": 40,
+        "listPrice": 48500
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 37,
+        "hp": 50,
+        "listPrice": 54500
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 45,
+        "hp": 60,
+        "listPrice": 74000
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 55,
+        "hp": 75,
+        "listPrice": 82300
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 75,
+        "hp": 100,
+        "listPrice": 102000
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 90,
+        "hp": 125,
+        "listPrice": 115000
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 110,
+        "hp": 150,
+        "listPrice": 138000
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 132,
+        "hp": 180,
+        "listPrice": 177000
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 160,
+        "hp": 225,
+        "listPrice": 198000
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 185,
+        "hp": 250,
+        "listPrice": 309000
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 200,
+        "hp": 275,
+        "listPrice": 340000
+      },
+      {
+        "brand": "VEICHI",
+        "kw": 220,
+        "hp": 300,
+        "listPrice": 390000
+      },
+      {
+        "brand": "delixi",
+        "kw": 0.75,
+        "hp": 1,
+        "listPrice": 7700
+      },
+      {
+        "brand": "delixi",
+        "kw": 1.5,
+        "hp": 2,
+        "listPrice": 8000
+      },
+      {
+        "brand": "delixi",
+        "kw": 2.2,
+        "hp": 3,
+        "listPrice": 9600
+      },
+      {
+        "brand": "delixi",
+        "kw": 4,
+        "hp": 5.5,
+        "listPrice": 10600
+      },
+      {
+        "brand": "delixi",
+        "kw": 5.5,
+        "hp": 7.5,
+        "listPrice": 14000
+      },
+      {
+        "brand": "delixi",
+        "kw": 7.5,
+        "hp": 10,
+        "listPrice": 15200
+      },
+      {
+        "brand": "delixi",
+        "kw": 10,
+        "hp": 15,
+        "listPrice": 19700
+      },
+      {
+        "brand": "delixi",
+        "kw": 15,
+        "hp": 20,
+        "listPrice": 22600
+      },
+      {
+        "brand": "delixi",
+        "kw": 18.5,
+        "hp": 25,
+        "listPrice": 29400
+      },
+      {
+        "brand": "delixi",
+        "kw": 22,
+        "hp": 30,
+        "listPrice": 35600
+      },
+      {
+        "brand": "delixi",
+        "kw": 30,
+        "hp": 40,
+        "listPrice": 44400
+      },
+      {
+        "brand": "delixi",
+        "kw": 37,
+        "hp": 50,
+        "listPrice": 53200
+      },
+      {
+        "brand": "delixi",
+        "kw": 45,
+        "hp": 60,
+        "listPrice": 68400
+      },
+      {
+        "brand": "delixi",
+        "kw": 55,
+        "hp": 75,
+        "listPrice": 75700
+      },
+      {
+        "brand": "delixi",
+        "kw": 75,
+        "hp": 100,
+        "listPrice": 86300
+      },
+      {
+        "brand": "delixi",
+        "kw": 90,
+        "hp": 125,
+        "listPrice": 106200
+      },
+      {
+        "brand": "delixi",
+        "kw": 110,
+        "hp": 150,
+        "listPrice": 121600
+      },
+      {
+        "brand": "delixi",
+        "kw": 132,
+        "hp": 180,
+        "listPrice": 156200
+      },
+      {
+        "brand": "SAJ",
+        "kw": 2.2,
+        "hp": 3,
+        "listPrice": 8000
+      },
+      {
+        "brand": "SAJ",
+        "kw": 4,
+        "hp": 5.5,
+        "listPrice": 9300
+      },
+      {
+        "brand": "SAJ",
+        "kw": 5.5,
+        "hp": 7.5,
+        "listPrice": 11200
+      },
+      {
+        "brand": "SAJ",
+        "kw": 7.5,
+        "hp": 10,
+        "listPrice": 13800
+      },
+      {
+        "brand": "SAJ",
+        "kw": 11,
+        "hp": 15,
+        "listPrice": 17400
+      },
+      {
+        "brand": "SAJ",
+        "kw": 15,
+        "hp": 20,
+        "listPrice": 21200
+      },
+      {
+        "brand": "SAJ",
+        "kw": 18.5,
+        "hp": 25,
+        "listPrice": 27900
+      },
+      {
+        "brand": "SAJ",
+        "kw": 22,
+        "hp": 30,
+        "listPrice": 30900
+      },
+      {
+        "brand": "SAJ",
+        "kw": 30,
+        "hp": 40,
+        "listPrice": 38900
+      },
+      {
+        "brand": "SAJ",
+        "kw": 37,
+        "hp": 50,
+        "listPrice": 46400
+      },
+      {
+        "brand": "SAJ",
+        "kw": 45,
+        "hp": 60,
+        "listPrice": 59900
+      },
+      {
+        "brand": "SAJ",
+        "kw": 55,
+        "hp": 75,
+        "listPrice": 65000
+      },
+      {
+        "brand": "SAJ",
+        "kw": 75,
+        "hp": 100,
+        "listPrice": 86000
+      },
+      {
+        "brand": "SAJ",
+        "kw": 93,
+        "hp": 125,
+        "listPrice": 102000
+      },
+      {
+        "brand": "SAJ",
+        "kw": 110,
+        "hp": 150,
+        "listPrice": 123000
+      },
+      {
+        "brand": "SAJ",
+        "kw": 132,
+        "hp": 180,
+        "listPrice": 160000
+      },
+      {
+        "brand": "SAJ",
+        "kw": 160,
+        "hp": 225,
+        "listPrice": 173000
+      },
+      {
+        "brand": "SAJ",
+        "kw": 200,
+        "hp": 270,
+        "listPrice": 265000
+      },
+      {
+        "brand": "SIS",
+        "kw": 7.5,
+        "hp": 10,
+        "listPrice": 14100
+      },
+      {
+        "brand": "SIS",
+        "kw": 10,
+        "hp": 15,
+        "listPrice": 17700
+      },
+      {
+        "brand": "SIS",
+        "kw": 15,
+        "hp": 20,
+        "listPrice": 21200
+      },
+      {
+        "brand": "SIS",
+        "kw": 22,
+        "hp": 30,
+        "listPrice": 32400
+      },
+      {
+        "brand": "SIS",
+        "kw": 30,
+        "hp": 40,
+        "listPrice": 42400
+      },
+      {
+        "brand": "SIS",
+        "kw": 37,
+        "hp": 50,
+        "listPrice": 48300
+      },
+      {
+        "brand": "SIS",
+        "kw": 45,
+        "hp": 60,
+        "listPrice": 61800
+      },
+      {
+        "brand": "SIS",
+        "kw": 55,
+        "hp": 70,
+        "listPrice": 68300
+      },
+      {
+        "brand": "FRACON",
+        "kw": 4,
+        "hp": 5.5,
+        "listPrice": 12000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 5.5,
+        "hp": 7.5,
+        "listPrice": 14000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 7.5,
+        "hp": 10,
+        "listPrice": 16000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 11,
+        "hp": 15,
+        "listPrice": 22000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 15,
+        "hp": 20,
+        "listPrice": 26500
+      },
+      {
+        "brand": "FRACON",
+        "kw": 18.5,
+        "hp": 25,
+        "listPrice": 35000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 22,
+        "hp": 30,
+        "listPrice": 40000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 30,
+        "hp": 40,
+        "listPrice": 56000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 37,
+        "hp": 50,
+        "listPrice": 62000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 45,
+        "hp": 60,
+        "listPrice": 79000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 55,
+        "hp": 75,
+        "listPrice": 94000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 75,
+        "hp": 100,
+        "listPrice": 116000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 90,
+        "hp": 125,
+        "listPrice": 131000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 110,
+        "hp": 150,
+        "listPrice": 150000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 132,
+        "hp": 180,
+        "listPrice": 200000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 160,
+        "hp": 225,
+        "listPrice": 230000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 185,
+        "hp": 250,
+        "listPrice": 250000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 200,
+        "hp": 270,
+        "listPrice": 300000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 220,
+        "hp": 300,
+        "listPrice": 350000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 250,
+        "hp": 330,
+        "listPrice": 380000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 280,
+        "hp": 370,
+        "listPrice": 420000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 315,
+        "hp": 420,
+        "listPrice": 450000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 355,
+        "hp": 470,
+        "listPrice": 520000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 400,
+        "hp": 530,
+        "listPrice": 550000
+      },
+      {
+        "brand": "FRACON",
+        "kw": 450,
+        "hp": 600,
+        "listPrice": 600000
+      }
+    ],
+    "hpBuckets": [
+      5.5,
+      7.5,
+      10,
+      15,
+      20,
+      25,
+      30,
+      40,
+      50,
+      60,
+      75,
+      100,
+      125,
+      150,
+      180,
+      225
+    ],
+    "kwBuckets": [
+      4,
+      5.5,
+      7.5,
+      10,
+      15,
+      18.5,
+      22,
+      30,
+      37,
+      45,
+      55,
+      75,
+      90,
+      110,
+      132,
+      160
+    ]
+  },
+  "reactor": {
+    "ampBuckets": [
+      50,
+      110,
+      150,
+      200,
+      250,
+      300
+    ],
+    "table": [
+      {
+        "amp": 50,
+        "price": 6500
+      },
+      {
+        "amp": 110,
+        "price": 9000
+      },
+      {
+        "amp": 150,
+        "price": 12000
+      },
+      {
+        "amp": 200,
+        "price": 16000
+      },
+      {
+        "amp": 250,
+        "price": 21000
+      },
+      {
+        "amp": 300,
+        "price": 23000
+      }
+    ]
+  },
+  "cb": {
+    "ampBuckets": [
+      32,
+      63,
+      80,
+      100,
+      125,
+      160,
+      200,
+      250
+    ],
+    "labels": [
+      "32",
+      "63",
+      "80",
+      "100",
+      "125",
+      "160",
+      "200",
+      "250"
+    ]
+  },
+  "mcb": [
+    {
+      "amp": 32,
+      "price": 300
+    },
+    {
+      "amp": 63,
+      "price": 300
+    },
+    {
+      "amp": 80,
+      "price": 2100
+    },
+    {
+      "amp": 100,
+      "price": 2100
+    },
+    {
+      "amp": 125,
+      "price": 2100
+    },
+    {
+      "amp": 160,
+      "price": 3100
+    },
+    {
+      "amp": 200,
+      "price": 3100
+    },
+    {
+      "amp": 250,
+      "price": 3100
+    },
+    {
+      "amp": 320,
+      "price": 8700
+    },
+    {
+      "amp": 400,
+      "price": 8700
+    }
+  ],
+  "combinerBox": {
+    "discount": 0.15,
+    "table": [
+      {
+        "arrays": 4,
+        "mccb": 80,
+        "listPrice": 6350
+      },
+      {
+        "arrays": 6,
+        "mccb": 125,
+        "listPrice": 7350
+      },
+      {
+        "arrays": 8,
+        "mccb": 160,
+        "listPrice": 8200
+      },
+      {
+        "arrays": 10,
+        "mccb": 200,
+        "listPrice": 9750
+      },
+      {
+        "arrays": 12,
+        "mccb": 250,
+        "listPrice": 10900
+      },
+      {
+        "arrays": 14,
+        "mccb": 250,
+        "listPrice": 13300
+      },
+      {
+        "arrays": 16,
+        "mccb": 320,
+        "listPrice": 14150
+      },
+      {
+        "arrays": 18,
+        "mccb": 400,
+        "listPrice": 17600
+      },
+      {
+        "arrays": 20,
+        "mccb": 400,
+        "listPrice": 19350
+      },
+      {
+        "arrays": 22,
+        "mccb": null,
+        "listPrice": 23950
+      },
+      {
+        "arrays": 24,
+        "mccb": null,
+        "listPrice": 24950
+      },
+      {
+        "arrays": 26,
+        "mccb": null,
+        "listPrice": 25800
+      },
+      {
+        "arrays": 28,
+        "mccb": null,
+        "listPrice": 27350
+      },
+      {
+        "arrays": 30,
+        "mccb": null,
+        "listPrice": 28500
+      },
+      {
+        "arrays": 32,
+        "mccb": null,
+        "listPrice": 30900
+      },
+      {
+        "arrays": 34,
+        "mccb": null,
+        "listPrice": 31750
+      },
+      {
+        "arrays": 36,
+        "mccb": null,
+        "listPrice": 35200
+      },
+      {
+        "arrays": 38,
+        "mccb": null,
+        "listPrice": 36950
+      },
+      {
+        "arrays": 40,
+        "mccb": null,
+        "listPrice": 41550
+      },
+      {
+        "arrays": 42,
+        "mccb": null,
+        "listPrice": 42550
+      }
+    ]
+  },
+  "steel": {
+    "fixedPricePerKW": 1250,
+    "rotational": {
+      "semco": {
+        "le15Panels": 27700,
+        "gt15Panels": 30900
+      },
+      "elmotaheda": {
+        "le15Panels": 23500,
+        "gt15Panels": 24500
+      }
+    },
+    "defaultBrand": "semco"
+  },
+  "cables": {
+    "meterPerArray": 70,
+    "pricePerMeter": 57,
+    "markup": 1.2,
+    "mc4PerArray": 2,
+    "mc4Price": 48,
+    "flexTubeDivisor": 40,
+    "flexTubePrice": 200
+  },
+  "earthing": {
+    "divisor": 40000,
+    "pricePerUnit": 15000,
+    "markup": 1.2
+  },
+  "reactorPricing": {
+    "markup": 1.2
+  },
+  "installation": {
+    "installDivisorKW": 1000,
+    "installPricePerUnit": 100,
+    "transportDivisor": 20000,
+    "transportPricePerUnit": 2500,
+    "steelPanelExtraPerUnit": 150,
+    "supplyInstallFixedPerKW": 1000,
+    "supplyInstallRotationalPerKW": 1500,
+    "supplyInstallFixedCommissionPerKW": 300,
+    "supplyInstallRotationalCommissionPerKW": 500
+  },
+  "panelMarkupPerWatt": 0.1,
+  "voltageLimitCap": 640,
+  "expectedVACFactor": 0.6224,
+  "defaults": {
+    "requestedW": 200000,
+    "panelBrand": "JA",
+    "panelPower": 620,
+    "structureType": "FIXED",
+    "inverterBrand": "VEICHI",
+    "solarEnabled": true,
+    "structureEnabled": true,
+    "inverterEnabled": true,
+    "cablesEnabled": true,
+    "combinerBoxQty": 0,
+    "earthingEnabled": false,
+    "reactorEnabled": false,
+    "supplyInstallEnabled": true,
+    "decreasePanelsPerString": 0,
+    "decreaseStrings": 0,
+    "increaseInverterHP": 0,
+    "extraDiscountPercent": 0
+  }
+}

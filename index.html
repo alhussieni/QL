@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حاسبة عرض سعر محطة الطاقة الشمسية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">☀</div>
+    <div class="brand-text">
+      <b id="companyNameTop">الأصل للطاقة الشمسية</b>
+      <span>QUOTE ENGINE</span>
+    </div>
+  </div>
+  <nav>
+    <button class="nav-btn active" data-view="calc">الحاسبة</button>
+    <button class="nav-btn" data-view="admin">لوحة الأدمن</button>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <!-- ======================= CALCULATOR VIEW ======================= -->
+  <section class="view active" id="view-calc">
+    <div class="hero">
+      <div class="eyebrow">Solar Pumping Station Configurator</div>
+      <h1>احسب عرض سعر محطة الطاقة الشمسية فورًا</h1>
+      <p>دخّل قدرة الموتور المطلوبة واختار المكونات، وهتلاقي عرض السعر التفصيلي والفني بيتحدث لحظيًا زي الإكسل بالظبط.</p>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: INPUTS -->
+      <div>
+        <div class="card">
+          <h2><span class="num">1</span> بيانات المشروع والقدرة</h2>
+          <div class="row2">
+            <div class="field">
+              <label>اسم العميل / المشروع</label>
+              <input type="text" id="clientName" placeholder="مثال: مزرعة السلام">
+            </div>
+            <div class="field">
+              <label>القدرة المطلوبة (وات) <span class="hint">Requested W</span></label>
+              <input type="number" id="requestedW" value="200000" step="1000" min="1000">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">2</span> الألواح والانفرتر والشاسية</h2>
+          <div class="row2">
+            <div class="field">
+              <label>ماركة اللوح الشمسي</label>
+              <select id="panelBrand"></select>
+            </div>
+            <div class="field">
+              <label>قدرة اللوح (واط)</label>
+              <select id="panelPower"></select>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>نوع الشاسية</label>
+              <select id="structureType">
+                <option value="FIXED">ثابت (Fixed)</option>
+                <option value="ROTATIONAL">متحرك (Rotational)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>ماركة الحديد (للمتحرك فقط)</label>
+              <select id="steelBrand">
+                <option value="semco">Semco</option>
+                <option value="elmotaheda">الموحدة</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>ماركة الانفرتر</label>
+            <select id="inverterBrand"></select>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">3</span> مكونات إضافية</h2>
+          <div class="switch-row">
+            <div class="lbl">الألواح الشمسية<small>تفعيل بند الألواح في العرض</small></div>
+            <label class="switch"><input type="checkbox" id="solarEnabled" checked><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="switch-row">
+            <div class="lbl">الشاسية / الحديد<small>تفعيل بند التركيب الإنشائي</small></div>
+            <label class="switch"><input type="checkbox" id="structureEnabled" checked><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="switch-row">
+            <div class="lbl">الانفرتر<small>تفعيل بند الانفرتر</small></div>
+            <label class="switch"><input type="checkbox" id="inverterEnabled" checked><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="switch-row">
+            <div class="lbl">الكابلات و MC4<small>حتى 70 متر لكل صف بشكل افتراضي</small></div>
+            <label class="switch"><input type="checkbox" id="cablesEnabled" checked><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="switch-row">
+            <div class="lbl">التأريض / بئر أرضي<small>يُحسب حسب القدرة الكلية</small></div>
+            <label class="switch"><input type="checkbox" id="earthingEnabled"><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="switch-row">
+            <div class="lbl">الريأكتور (VFD Reactor)<small>مطلوب لو المسافة أكتر من 100 متر</small></div>
+            <label class="switch"><input type="checkbox" id="reactorEnabled"><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="switch-row">
+            <div class="lbl">التوريد والتركيب والعمالة<small>1000 ج.م/كيلوواط ثابت، 1500 متحرك</small></div>
+            <label class="switch"><input type="checkbox" id="supplyInstallEnabled" checked><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="field" style="margin-top:14px;">
+            <label>عدد صناديق التجميع (Combiner Box)</label>
+            <input type="number" id="combinerBoxQty" value="0" min="0" step="1">
+          </div>
+
+          <details class="adv">
+            <summary>إعدادات متقدمة (ضبط يدوي)</summary>
+            <div class="adv-body">
+              <div class="row3">
+                <div class="field">
+                  <label>تقليل ألواح/سلسلة</label>
+                  <input type="number" id="decreasePanelsPerString" value="0">
+                </div>
+                <div class="field">
+                  <label>تقليل عدد السلاسل</label>
+                  <input type="number" id="decreaseStrings" value="0">
+                </div>
+                <div class="field">
+                  <label>زيادة قدرة الانفرتر (HP)</label>
+                  <input type="number" id="increaseInverterHP" value="0">
+                </div>
+              </div>
+              <div class="field">
+                <label>خصم إضافي يدوي (%)</label>
+                <input type="number" id="extraDiscountPercent" value="0" min="0" max="100" step="0.5">
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- RIGHT: RESULTS -->
+      <div>
+        <div class="card" id="errorsCard" style="display:none; border-color:rgba(226,100,90,.4);">
+          <h2 style="border:none; margin:0; color:var(--danger);">تنبيه</h2>
+          <div id="errorsList" style="font-size:13px; color:var(--ink-dim);"></div>
+        </div>
+
+        <div class="price-hero">
+          <div class="lbl">الإجمالي النهائي (شامل الخصم، غير شامل ض.ق.م)</div>
+          <div class="amt" id="finalPriceOut">0 ج.م</div>
+          <div class="sub"><span id="beforeDiscountOut"></span> <span id="pricePerKWOut"></span></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">⚡</span> المواصفات الفنية</h2>
+          <div class="spec-grid" id="specGrid"></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">$</span> تفاصيل عرض السعر</h2>
+          <div style="overflow-x:auto;">
+            <table class="offer" id="offerTable">
+              <thead><tr><th>#</th><th>البند</th><th>النوع</th><th>الكمية</th><th>السعر</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="totals" id="totalsBlock"></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">%</span> شروط السداد</h2>
+          <div id="paymentTerms"></div>
+        </div>
+
+        <button class="btn ghost" id="printBtn" style="margin-top:6px;">🖨 طباعة / حفظ PDF</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= ADMIN VIEW ======================= -->
+  <section class="view" id="view-admin">
+    <div id="admin-gate" class="gate">
+      <div class="icon">🔒</div>
+      <h2>دخول لوحة الأدمن</h2>
+      <p>لازم توكن GitHub بصلاحية الكتابة على الريبو عشان تقدر تحفظ التعديلات مباشرة للجميع. التوكن بيتخزن في المتصفح بتاعك فقط ومش بيتبعت لأي حد غير GitHub.</p>
+      <div class="field">
+        <label>مالك الريبو (Owner)</label>
+        <input type="text" id="ghOwner" placeholder="مثال: ahmed-solar">
+      </div>
+      <div class="field">
+        <label>اسم الريبو (Repo)</label>
+        <input type="text" id="ghRepo" placeholder="مثال: solar-quote-site">
+      </div>
+      <div class="field">
+        <label>الفرع (Branch)</label>
+        <input type="text" id="ghBranch" value="main">
+      </div>
+      <div class="field">
+        <label>GitHub Token (Fine-grained, Contents: Read & Write)</label>
+        <input type="password" id="ghToken" placeholder="github_pat_...">
+      </div>
+      <div class="switch-row" style="justify-content:flex-start; gap:10px;">
+        <label class="switch"><input type="checkbox" id="rememberToken"><span class="track"></span><span class="thumb"></span></label>
+        <div class="lbl" style="font-size:12.5px;">تذكرني على هذا الجهاز (غير مستحسن على جهاز مشترك)</div>
+      </div>
+      <button class="btn" id="unlockAdminBtn" style="margin-top:10px;">دخول</button>
+      <div class="field" style="margin-top:14px;">
+        <button class="btn ghost small" id="offlineAdminBtn">تعديل بدون حفظ فوري (تنزيل JSON يدويًا)</button>
+      </div>
+    </div>
+
+    <div id="admin-panel" style="display:none;">
+      <div class="admin-toolbar">
+        <div><span class="status-dot" id="connStatusDot"></span><span id="connStatusText" style="font-size:13px;">متصل بـ GitHub</span></div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn ghost small" id="downloadJsonBtn">تنزيل data.json</button>
+          <button class="btn small" id="saveGithubBtn">حفظ التعديلات على GitHub</button>
+          <button class="btn ghost small" id="lockAdminBtn">خروج</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">i</span> بيانات الشركة</h2>
+        <div class="row2">
+          <div class="field"><label>اسم الشركة</label><input type="text" id="cfgCompanyName"></div>
+          <div class="field"><label>رمز العملة</label><input type="text" id="cfgCurrencySymbol"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">☀</span> جدول الألواح الشمسية</h2>
+        <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">لازم كل لوح له سعر (جنيه/واط) عشان يظهر في اختيارات الحاسبة.</p>
+        <div class="tbl-wrap">
+          <table class="tbl-edit" id="panelsTable">
+            <thead><tr><th>الماركة</th><th>القدرة W</th><th>Vimp</th><th>Voc</th><th>I imp</th><th>I sc</th><th>السعر/واط</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button class="btn ghost small" id="addPanelBtn" style="margin-top:10px;">+ إضافة لوح</button>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">⚙</span> جدول الإنفرترات</h2>
+        <div class="row2" id="invDiscountsBox" style="margin-bottom:10px;"></div>
+        <div class="tbl-wrap">
+          <table class="tbl-edit" id="invTable">
+            <thead><tr><th>الماركة</th><th>HP</th><th>KW</th><th>السعر (Price List)</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button class="btn ghost small" id="addInvBtn" style="margin-top:10px;">+ إضافة موديل انفرتر</button>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">▦</span> صناديق التجميع (Combiner Box)</h2>
+        <div class="field" style="max-width:220px;"><label>نسبة الخصم على السعر الأصلي</label><input type="number" id="cfgCombinerDiscount" step="0.01"></div>
+        <div class="tbl-wrap">
+          <table class="tbl-edit" id="combinerTable">
+            <thead><tr><th>عدد المصفوفات</th><th>MCCB</th><th>السعر الأصلي</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button class="btn ghost small" id="addCombinerBtn" style="margin-top:10px;">+ إضافة صف</button>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">▤</span> الريأكتور والقواطع (MCCB)</h2>
+        <div class="row2">
+          <div>
+            <b style="font-size:12.5px; color:var(--ink-dim);">الريأكتور</b>
+            <div class="tbl-wrap" style="margin-top:8px;">
+              <table class="tbl-edit" id="reactorTable">
+                <thead><tr><th>أمبير</th><th>السعر</th><th></th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <button class="btn ghost small" id="addReactorBtn" style="margin-top:10px;">+ إضافة</button>
+          </div>
+          <div>
+            <b style="font-size:12.5px; color:var(--ink-dim);">قواطع MCB/MCCB</b>
+            <div class="tbl-wrap" style="margin-top:8px;">
+              <table class="tbl-edit" id="mcbTable">
+                <thead><tr><th>أمبير</th><th>السعر</th><th></th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <button class="btn ghost small" id="addMcbBtn" style="margin-top:10px;">+ إضافة</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">▧</span> أسعار الحديد / الشاسية</h2>
+        <div class="row3">
+          <div class="field"><label>ثابت - جنيه/كيلوواط</label><input type="number" id="cfgSteelFixed"></div>
+          <div class="field"><label>متحرك Semco (≤15 لوح/سلسلة)</label><input type="number" id="cfgSteelSemco15"></div>
+          <div class="field"><label>متحرك Semco (&gt;15 لوح/سلسلة)</label><input type="number" id="cfgSteelSemcoGt15"></div>
+        </div>
+        <div class="row3">
+          <div></div>
+          <div class="field"><label>متحرك الموحدة (≤15 لوح/سلسلة)</label><input type="number" id="cfgSteelElmo15"></div>
+          <div class="field"><label>متحرك الموحدة (&gt;15 لوح/سلسلة)</label><input type="number" id="cfgSteelElmoGt15"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">≡</span> ثوابت أخرى (كابلات / تأريض / تركيب / نقل)</h2>
+        <div class="row3">
+          <div class="field"><label>متر كابل/صف</label><input type="number" id="cfgCableMeterPerArray"></div>
+          <div class="field"><label>سعر متر الكابل</label><input type="number" id="cfgCablePricePerMeter"></div>
+          <div class="field"><label>معامل ربح الكابلات</label><input type="number" id="cfgCableMarkup" step="0.01"></div>
+        </div>
+        <div class="row3">
+          <div class="field"><label>MC4 لكل صف</label><input type="number" id="cfgMc4PerArray"></div>
+          <div class="field"><label>سعر MC4</label><input type="number" id="cfgMc4Price"></div>
+          <div class="field"><label>سعر الخرطوم المرن</label><input type="number" id="cfgFlexTubePrice"></div>
+        </div>
+        <div class="row3">
+          <div class="field"><label>مقسوم عليه التأريض (واط)</label><input type="number" id="cfgEarthDivisor"></div>
+          <div class="field"><label>سعر وحدة التأريض</label><input type="number" id="cfgEarthPrice"></div>
+          <div class="field"><label>معامل ربح التأريض والريأكتور</label><input type="number" id="cfgEarthMarkup" step="0.01"></div>
+        </div>
+        <div class="row3">
+          <div class="field"><label>سعر وحدة التركيب/كيلوواط</label><input type="number" id="cfgInstallPrice"></div>
+          <div class="field"><label>مقسوم عليه النقل (واط)</label><input type="number" id="cfgTransportDivisor"></div>
+          <div class="field"><label>سعر وحدة النقل</label><input type="number" id="cfgTransportPrice"></div>
+        </div>
+        <div class="row3">
+          <div class="field"><label>توريد وتركيب ثابت (جنيه/كيلوواط)</label><input type="number" id="cfgSupplyFixed"></div>
+          <div class="field"><label>توريد وتركيب متحرك (جنيه/كيلوواط)</label><input type="number" id="cfgSupplyRot"></div>
+          <div class="field"><label>هامش الربح للألواح (جنيه/واط)</label><input type="number" id="cfgPanelMarkup" step="0.01"></div>
+        </div>
+      </div>
+
+      <button class="btn" id="saveGithubBtn2" style="margin-bottom:40px;">حفظ كل التعديلات على GitHub</button>
+    </div>
+  </section>
+
+</div>
+
+<div class="footer">
+  حاسبة عرض أسعار محطات الطاقة الشمسية &middot; مبنية بالكامل على المتصفح (Static) &middot; جاهزة لـ GitHub Pages
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="calc.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
