@@ -255,10 +255,22 @@ function renderAdminForms() {
   document.getElementById('cfgCompanyName').value = DATA.meta.companyName;
   document.getElementById('cfgCurrencySymbol').value = DATA.meta.currencySymbol;
 
-  // panels table
+  // panels table - رتب الألواح الناقصة سعر أولاً عشان يسهل الوصول ليها وتعبئتها
   const panelsBody = document.querySelector('#panelsTable tbody');
   panelsBody.innerHTML = '';
-  DATA.panels.forEach((p, i) => panelsBody.appendChild(panelRow(p, i)));
+  const panelIndexPairs = DATA.panels.map((p, i) => [p, i]);
+  panelIndexPairs.sort((a, b) => {
+    const aMissing = !a[0].price ? 0 : 1;
+    const bMissing = !b[0].price ? 0 : 1;
+    if (aMissing !== bMissing) return aMissing - bMissing;
+    return String(a[0].brand).localeCompare(String(b[0].brand));
+  });
+  const missingCount = DATA.panels.filter(p => !p.price).length;
+  document.getElementById('panelsMissingNote').textContent =
+    missingCount > 0
+      ? `⚠ يوجد ${missingCount} لوح بدون سعر (مظللة بالأصفر تحت) - أضف السعر عشان يظهروا في الحاسبة.`
+      : `✓ كل الألواح ليها سعر مسجل.`;
+  panelIndexPairs.forEach(([p, i]) => panelsBody.appendChild(panelRow(p, i)));
 
   // inverter discounts
   const discBrands = Object.keys(DATA.inverter.discounts);
@@ -316,12 +328,16 @@ function renderAdminForms() {
 
 function panelRow(p, i) {
   const tr = document.createElement('tr');
+  if (!p.price) tr.style.background = 'rgba(245,166,35,.08)';
   const fields = ['brand','power','vimp','voc','iimp','isc','price'];
-  tr.innerHTML = fields.map(f => `<td><input type="${f==='brand'?'text':'number'}" data-panel="${i}" data-field="${f}" value="${p[f] ?? ''}"></td>`).join('') +
+  tr.innerHTML = fields.map(f => `<td><input type="${f==='brand'?'text':'number'}" data-panel="${i}" data-field="${f}" value="${p[f] ?? ''}" ${f==='price' && !p.price ? 'placeholder="أضف السعر"' : ''}></td>`).join('') +
     `<td><button class="rm" data-rm-panel="${i}">×</button></td>`;
   tr.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
     const val = inp.dataset.field === 'brand' ? inp.value : Number(inp.value);
     DATA.panels[i][inp.dataset.field] = val;
+    if (inp.dataset.field === 'price') {
+      tr.style.background = Number(inp.value) ? '' : 'rgba(245,166,35,.08)';
+    }
   }));
   tr.querySelector('[data-rm-panel]').addEventListener('click', () => { DATA.panels.splice(i,1); renderAdminForms(); });
   return tr;
