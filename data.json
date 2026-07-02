@@ -3,7 +3,7 @@
     "companyName": "الأصل للطاقة الشمسية",
     "currency": "جنيه مصري",
     "currencySymbol": "ج.م",
-    "lastUpdated": "2026-07-01"
+    "lastUpdated": "2026-07-02"
   },
   "panels": [
     {
@@ -634,7 +634,7 @@
       "voc": null,
       "iimp": null,
       "isc": null,
-      "price": 7.75
+      "price": 8.3
     },
     {
       "brand": "astro",
@@ -643,16 +643,25 @@
       "voc": null,
       "iimp": null,
       "isc": null,
-      "price": 7.7
+      "price": 0
     },
     {
       "brand": "astro",
-      "power": 615,
+      "power": 715,
       "vimp": null,
       "voc": null,
       "iimp": null,
       "isc": null,
-      "price": 8.1
+      "price": 8
+    },
+    {
+      "brand": "aiko",
+      "power": 6440,
+      "vimp": 0,
+      "voc": 0,
+      "iimp": 0,
+      "isc": 0,
+      "price": 8
     }
   ],
   "inverter": {
