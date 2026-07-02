@@ -81,7 +81,7 @@ function bindInputs() {
     el.addEventListener('input', recalc);
     el.addEventListener('change', recalc);
   });
-  document.getElementById('printBtn').addEventListener('click', () => window.print());
+  document.getElementById('printBtn').addEventListener('click', preparePrintAndPrint);
 }
 
 function readInputs() {
@@ -108,10 +108,14 @@ function readInputs() {
   };
 }
 
+let LAST_RESULT = null;
+let quoteCounter = 1;
+
 function recalc() {
   if (!DATA) return;
   const inputs = readInputs();
   const r = computeOffer(DATA, inputs);
+  LAST_RESULT = r;
   const errCard = document.getElementById('errorsCard');
   if (r.errors && r.errors.length) {
     errCard.style.display = 'block';
@@ -169,6 +173,53 @@ loadData().catch(err => {
   console.error(err);
   toast('تعذر تحميل data.json - تأكد إنه في نفس مجلد الموقع', 'err');
 });
+
+function preparePrintAndPrint() {
+  const r = LAST_RESULT;
+  if (!r || !r.totals) { toast('من فضلك أكمل بيانات الحسبة أولًا', 'err'); return; }
+  const sym = DATA.meta.currencySymbol;
+  const inputs = readInputs();
+
+  document.getElementById('pqCompanyName').textContent = DATA.meta.companyName;
+  document.getElementById('pqQuoteNo').textContent = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(quoteCounter++).padStart(3,'0');
+  document.getElementById('pqDate').textContent = new Date().toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('pqClient').textContent = document.getElementById('clientName').value || 'غير محدد';
+  document.getElementById('pqRequestedKW').textContent = `${(Number(inputs.requestedW)/1000).toLocaleString('en-US')} كيلوواط`;
+  document.getElementById('pqStructureType').textContent = inputs.structureType === 'FIXED' ? 'ثابت (Fixed)' : 'متحرك (Rotational)';
+
+  const specs = [
+    ['عدد الألواح', `${r.H7}`],
+    ['القدرة المصممة', `${r.H8.toFixed(1)} KW`],
+    ['موديل الانفرتر', r.H14.text],
+    ['فولت السلسلة', `${r.H10.toFixed(0)} V`],
+    ['القاطع الرئيسي', `${r.cbBucket} A`],
+  ];
+  document.getElementById('pqSpecs').innerHTML = specs.map(([k,v]) =>
+    `<div class="cell"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+
+  document.getElementById('pqOfferBody').innerHTML = r.offer.rows.map(row => `
+    <tr>
+      <td>${row.n}</td>
+      <td>${row.name}</td>
+      <td>${row.type}</td>
+      <td>${row.qty}</td>
+      <td>${row.origin}</td>
+      <td>${row.warranty}</td>
+      <td class="num">${fmt(row.price)} ${sym}</td>
+    </tr>`).join('');
+
+  document.getElementById('pqTotals').innerHTML = `
+    <div class="row"><span>الإجمالي قبل الخصم</span><span>${fmt(r.totals.beforeDiscount)} ${sym}</span></div>
+    <div class="row"><span>الخصم</span><span>- ${fmt(r.totals.discount)} ${sym}</span></div>
+    <div class="row final"><span>الإجمالي النهائي</span><span>${fmt(r.totals.finalPrice)} ${sym}</span></div>
+  `;
+
+  document.getElementById('pqPayment').innerHTML = r.paymentTerms.map(t => `
+    <div class="row"><span>${t.label} (${Math.round(t.pct*100)}%)</span><span>${fmt(t.amount)} ${sym}</span></div>
+  `).join('');
+
+  window.print();
+}
 
 /* =========================================================================
    ADMIN PANEL
