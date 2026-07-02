@@ -1,6 +1,6 @@
 {
   "meta": {
-    "companyName": "الأصل للطاقة الشمسية-AlaslSolar ",
+    "companyName": "الأصل للطاقة الشمسية",
     "currency": "جنيه مصري",
     "currencySymbol": "ج.م",
     "lastUpdated": "2026-07-01"
@@ -1433,7 +1433,8 @@
         "mccb": null,
         "listPrice": 42550
       }
-    ]
+    ],
+    "stringsPerBox": 6
   },
   "steel": {
     "fixedPricePerKW": 1250,

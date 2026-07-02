@@ -151,12 +151,14 @@ function computeOffer(data, inputs) {
   const mc4Qty = data.cables.mc4PerArray * H6;
   Calc.mc4Cost = inputs.cablesEnabled ? mc4Qty * data.cables.mc4Price : 0;
 
-  // 7) صندوق التجميع
+  // 7) صندوق التجميع - يُحسب تلقائيًا: كل صندوق يستوعب stringsPerBox مصفوفة (Array)
   const combinerRow = findCombinerRow(data, H6);
   const combinerDiscounted = combinerRow.listPrice * (1 - data.combinerBox.discount);
-  const combinerQty = Number(inputs.combinerBoxQty) || 0;
+  const stringsPerBox = data.combinerBox.stringsPerBox || 6;
+  const combinerQty = inputs.solarEnabled && H6 > 0 ? Math.ceil(H6 / stringsPerBox) : 0;
   Calc.combinerCost = combinerDiscounted * combinerQty;
   Calc.combinerUnitPrice = combinerDiscounted;
+  Calc.combinerQty = combinerQty;
   Calc.combinerRow = combinerRow;
 
   // 8) الخرطوم المرن
@@ -273,7 +275,7 @@ function computeOffer(data, inputs) {
   return {
     errors,
     panel, H5, H6, H7, C5, H8, H9, H10, H11, H12, H13, H14, H15, H16, H17, cbBucket,
-    invModel, invDiscount, combinerRow,
+    invModel, invDiscount, combinerRow, combinerQty: Calc.combinerQty,
     Calc,
     offer,
     totals: {

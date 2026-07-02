@@ -50,9 +50,8 @@ function populateSelectors() {
   invSel.innerHTML = invBrands.map(b => `<option value="${b}">${b}</option>`).join('');
   invSel.value = invBrands.includes(DATA.defaults.inverterBrand) ? DATA.defaults.inverterBrand : invBrands[0];
 
-  document.getElementById('requestedW').value = DATA.defaults.requestedW;
+  document.getElementById('requestedKW').value = DATA.defaults.requestedW / 1000;
   document.getElementById('structureType').value = DATA.defaults.structureType;
-  document.getElementById('combinerBoxQty').value = DATA.defaults.combinerBoxQty;
   document.getElementById('solarEnabled').checked = DATA.defaults.solarEnabled;
   document.getElementById('structureEnabled').checked = DATA.defaults.structureEnabled;
   document.getElementById('inverterEnabled').checked = DATA.defaults.inverterEnabled;
@@ -72,9 +71,9 @@ function populatePanelPowers() {
 
 function bindInputs() {
   document.getElementById('panelBrand').addEventListener('change', () => { populatePanelPowers(); recalc(); });
-  const ids = ['requestedW','panelPower','structureType','steelBrand','inverterBrand',
+  const ids = ['requestedKW','panelPower','structureType','steelBrand','inverterBrand',
     'solarEnabled','structureEnabled','inverterEnabled','cablesEnabled','earthingEnabled',
-    'reactorEnabled','supplyInstallEnabled','combinerBoxQty','decreasePanelsPerString',
+    'reactorEnabled','supplyInstallEnabled','decreasePanelsPerString',
     'decreaseStrings','increaseInverterHP','extraDiscountPercent','clientName'];
   ids.forEach(id => {
     const el = document.getElementById(id);
@@ -87,7 +86,7 @@ function bindInputs() {
 function readInputs() {
   const g = id => document.getElementById(id);
   return {
-    requestedW: g('requestedW').value,
+    requestedW: (Number(g('requestedKW').value) || 0) * 1000,
     panelBrand: g('panelBrand').value,
     panelPower: g('panelPower').value,
     structureType: g('structureType').value,
@@ -97,7 +96,6 @@ function readInputs() {
     structureEnabled: g('structureEnabled').checked,
     inverterEnabled: g('inverterEnabled').checked,
     cablesEnabled: g('cablesEnabled').checked,
-    combinerBoxQty: g('combinerBoxQty').value,
     earthingEnabled: g('earthingEnabled').checked,
     reactorEnabled: g('reactorEnabled').checked,
     supplyInstallEnabled: g('supplyInstallEnabled').checked,
@@ -126,6 +124,7 @@ function recalc() {
   }
 
   const sym = DATA.meta.currencySymbol;
+  document.getElementById('combinerAutoQty').textContent = `${r.combinerQty} × ${fmt(r.Calc.combinerUnitPrice)} ${sym}`;
   document.getElementById('finalPriceOut').textContent = `${fmt(r.totals.finalPrice)} ${sym}`;
   document.getElementById('beforeDiscountOut').innerHTML =
     r.totals.discount > 0 ? `<span class="strike">${fmt(r.totals.beforeDiscount)}</span>` : '';
@@ -338,6 +337,7 @@ function renderAdminForms() {
 
   // combiner box
   document.getElementById('cfgCombinerDiscount').value = DATA.combinerBox.discount;
+  document.getElementById('cfgStringsPerBox').value = DATA.combinerBox.stringsPerBox || 6;
   const cbBody = document.querySelector('#combinerTable tbody');
   cbBody.innerHTML = '';
   DATA.combinerBox.table.forEach((c, i) => cbBody.appendChild(combinerRow(c, i)));
@@ -456,6 +456,7 @@ function collectConstantsIntoData() {
   DATA.meta.companyName = document.getElementById('cfgCompanyName').value;
   DATA.meta.currencySymbol = document.getElementById('cfgCurrencySymbol').value;
   DATA.combinerBox.discount = Number(document.getElementById('cfgCombinerDiscount').value);
+  DATA.combinerBox.stringsPerBox = Number(document.getElementById('cfgStringsPerBox').value) || 6;
   DATA.steel.fixedPricePerKW = Number(document.getElementById('cfgSteelFixed').value);
   DATA.steel.rotational.semco.le15Panels = Number(document.getElementById('cfgSteelSemco15').value);
   DATA.steel.rotational.semco.gt15Panels = Number(document.getElementById('cfgSteelSemcoGt15').value);

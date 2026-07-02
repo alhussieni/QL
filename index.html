@@ -12,7 +12,7 @@
 
 <div class="topbar">
   <div class="brand">
-    <div class="brand-mark"><img src="assets/logo.png" alt="شعار الشركة"></div>
+    <div class="brand-mark"><img src="assets/logo.png" alt="شعار الشركة" onerror="this.style.display='none'; this.parentElement.innerHTML='☀';"></div>
     <div class="brand-text">
       <b id="companyNameTop">الأصل للطاقة الشمسية</b>
       <span>QUOTE ENGINE</span>
@@ -45,8 +45,8 @@
               <input type="text" id="clientName" placeholder="مثال: مزرعة السلام">
             </div>
             <div class="field">
-              <label>القدرة المطلوبة (وات) <span class="hint">Requested W</span></label>
-              <input type="number" id="requestedW" value="200000" step="1000" min="1000">
+              <label>القدرة المطلوبة (كيلوواط) <span class="hint">Requested KW</span></label>
+              <input type="number" id="requestedKW" value="200" step="1" min="1">
             </div>
           </div>
         </div>
@@ -88,36 +88,36 @@
         <div class="card">
           <h2><span class="num">3</span> مكونات إضافية</h2>
           <div class="switch-row">
-            <div class="lbl">الألواح الشمسية<small>تفعيل بند الألواح في العرض</small></div>
+            <div class="lbl">الألواح الشمسية</div>
             <label class="switch"><input type="checkbox" id="solarEnabled" checked><span class="track"></span><span class="thumb"></span></label>
           </div>
           <div class="switch-row">
-            <div class="lbl">الشاسية / الحديد<small>تفعيل بند التركيب الإنشائي</small></div>
+            <div class="lbl">الشاسية / الحديد</div>
             <label class="switch"><input type="checkbox" id="structureEnabled" checked><span class="track"></span><span class="thumb"></span></label>
           </div>
           <div class="switch-row">
-            <div class="lbl">الانفرتر<small>تفعيل بند الانفرتر</small></div>
+            <div class="lbl">الانفرتر</div>
             <label class="switch"><input type="checkbox" id="inverterEnabled" checked><span class="track"></span><span class="thumb"></span></label>
           </div>
           <div class="switch-row">
-            <div class="lbl">الكابلات و MC4<small>حتى 70 متر لكل صف بشكل افتراضي</small></div>
+            <div class="lbl">الكابلات و MC4</div>
             <label class="switch"><input type="checkbox" id="cablesEnabled" checked><span class="track"></span><span class="thumb"></span></label>
           </div>
           <div class="switch-row">
-            <div class="lbl">التأريض / بئر أرضي<small>يُحسب حسب القدرة الكلية</small></div>
+            <div class="lbl">التأريض / بئر أرضي</div>
             <label class="switch"><input type="checkbox" id="earthingEnabled"><span class="track"></span><span class="thumb"></span></label>
           </div>
           <div class="switch-row">
-            <div class="lbl">الريأكتور (VFD Reactor)<small>مطلوب لو المسافة أكتر من 100 متر</small></div>
+            <div class="lbl">الريأكتور (VFD Reactor)</div>
             <label class="switch"><input type="checkbox" id="reactorEnabled"><span class="track"></span><span class="thumb"></span></label>
           </div>
           <div class="switch-row">
-            <div class="lbl">التوريد والتركيب والعمالة<small>1000 ج.م/كيلوواط ثابت، 1500 متحرك</small></div>
+            <div class="lbl">التوريد والتركيب والعمالة</div>
             <label class="switch"><input type="checkbox" id="supplyInstallEnabled" checked><span class="track"></span><span class="thumb"></span></label>
           </div>
-          <div class="field" style="margin-top:14px;">
-            <label>عدد صناديق التجميع (Combiner Box)</label>
-            <input type="number" id="combinerBoxQty" value="0" min="0" step="1">
+          <div class="switch-row">
+            <div class="lbl">صناديق التجميع (Combiner Box)</div>
+            <div style="font-family:var(--mono); font-weight:800; font-size:15px; color:var(--sun-deep);" id="combinerAutoQty">0</div>
           </div>
 
           <details class="adv">
@@ -262,7 +262,10 @@
 
       <div class="card">
         <h2><span class="num">▦</span> صناديق التجميع (Combiner Box)</h2>
-        <div class="field" style="max-width:220px;"><label>نسبة الخصم على السعر الأصلي</label><input type="number" id="cfgCombinerDiscount" step="0.01"></div>
+        <div class="row2">
+          <div class="field"><label>نسبة الخصم على السعر الأصلي</label><input type="number" id="cfgCombinerDiscount" step="0.01"></div>
+          <div class="field"><label>عدد المصفوفات (Arrays) لكل صندوق</label><input type="number" id="cfgStringsPerBox" step="1" min="1"></div>
+        </div>
         <div class="tbl-wrap">
           <table class="tbl-edit" id="combinerTable">
             <thead><tr><th>عدد المصفوفات</th><th>MCCB</th><th>السعر الأصلي</th><th></th></tr></thead>
@@ -357,7 +360,7 @@
 <div id="printQuote">
   <div class="pq-header">
     <div class="pq-brand">
-      <img src="assets/logo.png" alt="شعار الشركة">
+      <img src="assets/logo.png" alt="شعار الشركة" onerror="this.style.display='none';">
       <div>
         <div class="pq-name" id="pqCompanyName"></div>
         <div class="pq-sub">عرض سعر محطة طاقة شمسية</div>
