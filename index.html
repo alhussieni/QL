@@ -12,7 +12,7 @@
 
 <div class="topbar">
   <div class="brand">
-    <div class="brand-mark"><img src="assets/logo.png" alt="شعار الشركة" onerror="this.style.display='none'; this.parentElement.innerHTML='☀';"></div>
+    <div class="brand-mark"><img src="logo.png" alt="شعار الشركة" onerror="this.style.display='none'; this.parentElement.innerHTML='☀';"></div>
     <div class="brand-text">
       <b id="companyNameTop">الأصل للطاقة الشمسية</b>
       <span>QUOTE ENGINE</span>
@@ -358,7 +358,7 @@
 
 <!-- ======================= PRINT-ONLY QUOTE TEMPLATE ======================= -->
 <div id="printQuote">
-  <img class="pq-letterhead-bg" src="assets/letterhead.jpg" alt="">
+  <img class="pq-letterhead-bg" src="letterhead.jpg" alt="">
   <div class="pq-content">
     <div class="pq-doc">
       <b>عرض سعر</b>
@@ -385,12 +385,15 @@
 
     <table class="pq-table">
       <thead>
-        <tr><th>#</th><th>البند</th><th>النوع</th><th>الكمية</th><th>المنشأ</th><th>الضمان</th><th>السعر</th></tr>
+        <tr><th>#</th><th>البند</th><th>النوع</th><th>الكمية</th><th>المنشأ</th><th>الضمان</th></tr>
       </thead>
       <tbody id="pqOfferBody"></tbody>
     </table>
 
-    <div class="pq-totals" id="pqTotals"></div>
+    <div class="pq-grandtotal" id="pqGrandTotal">
+      <div class="k">السعر الإجمالي للعرض (غير شامل ض.ق.م)</div>
+      <div class="v" id="pqGrandTotalValue">-</div>
+    </div>
 
     <div class="pq-payment">
       <div class="title">شروط السداد</div>

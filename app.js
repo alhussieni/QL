@@ -203,14 +203,9 @@ function preparePrintAndPrint() {
       <td>${row.qty}</td>
       <td>${row.origin}</td>
       <td>${row.warranty}</td>
-      <td class="num">${fmt(row.price)} ${sym}</td>
     </tr>`).join('');
 
-  document.getElementById('pqTotals').innerHTML = `
-    <div class="row"><span>الإجمالي قبل الخصم</span><span>${fmt(r.totals.beforeDiscount)} ${sym}</span></div>
-    <div class="row"><span>الخصم</span><span>- ${fmt(r.totals.discount)} ${sym}</span></div>
-    <div class="row final"><span>الإجمالي النهائي</span><span>${fmt(r.totals.finalPrice)} ${sym}</span></div>
-  `;
+  document.getElementById('pqGrandTotalValue').textContent = `${fmt(r.totals.finalPrice)} ${sym}`;
 
   document.getElementById('pqPayment').innerHTML = r.paymentTerms.map(t => `
     <div class="row"><span>${t.label} (${Math.round(t.pct*100)}%)</span><span>${fmt(t.amount)} ${sym}</span></div>

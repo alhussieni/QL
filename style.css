@@ -262,10 +262,10 @@ table.offer tfoot td{padding-top:12px; font-weight:800;}
   }
   .pq-content{
     position:relative;
-    padding:54mm 14mm 24mm 14mm;
+    padding:70mm 14mm 28mm 14mm;
     box-sizing:border-box;
   }
-  .pq-doc{ text-align:left; font-size:11px; color:#5a5346; margin-bottom:10px; }
+  .pq-doc{ text-align:right; font-size:11px; color:#5a5346; margin-bottom:10px; }
   .pq-doc b{ font-size:14px; color:#1c1a16; display:block; margin-bottom:2px; }
 
   .pq-meta{ display:flex; justify-content:space-between; gap:14px; margin-bottom:10px; font-size:11px; }
@@ -287,11 +287,13 @@ table.offer tfoot td{padding-top:12px; font-weight:800;}
   table.pq-table tr:nth-child(even) td{ background:#faf7f0; }
   table.pq-table td.num{ font-family:'Courier New', monospace; white-space:nowrap; }
 
-  .pq-totals{ width:270px; margin-inline-start:auto; font-size:11.5px; margin-bottom:10px; }
-  .pq-totals .row{ display:flex; justify-content:space-between; padding:4px 8px; border-bottom:1px solid #ece5d3; }
-  .pq-totals .row.final{
-    background:#e8811a; color:#fff; font-weight:800; font-size:13.5px; border-radius:0 0 6px 6px; border:none;
+  .pq-grandtotal{
+    background:#e8811a; color:#fff; border-radius:8px; padding:14px 18px;
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:14px;
   }
+  .pq-grandtotal .k{ font-size:12px; font-weight:600; }
+  .pq-grandtotal .v{ font-size:20px; font-weight:800; font-family:'Courier New', monospace; }
 
   .pq-payment{ margin-bottom:8px; }
   .pq-payment .title{ font-size:12px; font-weight:800; margin-bottom:6px; }
