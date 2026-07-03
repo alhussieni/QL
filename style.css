@@ -265,8 +265,11 @@ table.offer tfoot td{padding-top:12px; font-weight:800;}
     padding:70mm 14mm 28mm 14mm;
     box-sizing:border-box;
   }
-  .pq-doc{ text-align:right; font-size:11px; color:#5a5346; margin-bottom:10px; }
-  .pq-doc b{ font-size:14px; color:#1c1a16; display:block; margin-bottom:2px; }
+  .pq-doc{
+    position:absolute; top:16mm; right:14mm; left:14mm;
+    text-align:right; font-size:11px; color:#5a5346;
+  }
+  .pq-doc b{ font-size:16px; color:#1c1a16; display:block; margin-bottom:4px; }
 
   .pq-meta{ display:flex; justify-content:space-between; gap:14px; margin-bottom:10px; font-size:11px; }
   .pq-meta .box{ flex:1; background:#faf7f0; border:1px solid #ece5d3; border-radius:6px; padding:7px 10px; }
