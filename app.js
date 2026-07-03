@@ -179,7 +179,6 @@ function preparePrintAndPrint() {
   const sym = DATA.meta.currencySymbol;
   const inputs = readInputs();
 
-  document.getElementById('pqCompanyName').textContent = DATA.meta.companyName;
   document.getElementById('pqQuoteNo').textContent = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(quoteCounter++).padStart(3,'0');
   document.getElementById('pqDate').textContent = new Date().toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' });
   document.getElementById('pqClient').textContent = document.getElementById('clientName').value || 'غير محدد';
