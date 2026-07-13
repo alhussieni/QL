@@ -3,7 +3,7 @@
     "companyName": "الأصل للطاقة الشمسية",
     "currency": "جنيه مصري",
     "currencySymbol": "ج.م",
-    "lastUpdated": "2026-07-02"
+    "lastUpdated": "2026-07-13"
   },
   "panels": [
     {
@@ -662,6 +662,15 @@
       "iimp": 0,
       "isc": 0,
       "price": 8
+    },
+    {
+      "brand": "JA",
+      "power": 725,
+      "vimp": 41.39,
+      "voc": 49.2,
+      "iimp": 17.52,
+      "isc": 18.63,
+      "price": 7.7
     }
   ],
   "inverter": {
@@ -1441,6 +1450,11 @@
         "arrays": 42,
         "mccb": null,
         "listPrice": 42550
+      },
+      {
+        "arrays": 4,
+        "mccb": 80,
+        "listPrice": 6350
       }
     ],
     "stringsPerBox": 6
