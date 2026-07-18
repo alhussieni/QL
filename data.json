@@ -630,11 +630,11 @@
     {
       "brand": "aiko",
       "power": 645,
-      "vimp": 45.20,
-      "voc": 53.90,
+      "vimp": 45.2,
+      "voc": 53.9,
       "iimp": 14.27,
       "isc": 15,
-      "price": 8.3
+      "price": 8
     },
     {
       "brand": "astro",
@@ -657,9 +657,9 @@
     {
       "brand": "aiko",
       "power": 640,
-      "vimp": 45.10,
-      "voc": 53.80,
-      "iimp":14.20,
+      "vimp": 45.1,
+      "voc": 53.8,
+      "iimp": 14.2,
       "isc": 14.94,
       "price": 8
     },
