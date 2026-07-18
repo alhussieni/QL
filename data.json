@@ -3,7 +3,7 @@
     "companyName": "الأصل للطاقة الشمسية",
     "currency": "جنيه مصري",
     "currencySymbol": "ج.م",
-    "lastUpdated": "2026-07-13"
+    "lastUpdated": "2026-07-18"
   },
   "panels": [
     {
@@ -656,7 +656,7 @@
     },
     {
       "brand": "aiko",
-      "power": 6440,
+      "power": 640,
       "vimp": 0,
       "voc": 0,
       "iimp": 0,
