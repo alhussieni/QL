@@ -630,10 +630,10 @@
     {
       "brand": "aiko",
       "power": 645,
-      "vimp": null,
-      "voc": null,
-      "iimp": null,
-      "isc": null,
+      "vimp": 45.20,
+      "voc": 53.90,
+      "iimp": 14.27,
+      "isc": 15,
       "price": 8.3
     },
     {
@@ -657,10 +657,10 @@
     {
       "brand": "aiko",
       "power": 640,
-      "vimp": 0,
-      "voc": 0,
-      "iimp": 0,
-      "isc": 0,
+      "vimp": 45.10,
+      "voc": 53.80,
+      "iimp":14.20,
+      "isc": 14.94,
       "price": 8
     },
     {
