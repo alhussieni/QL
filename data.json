@@ -1504,7 +1504,7 @@
     "supplyInstallRotationalCommissionPerKW": 500
   },
   "panelMarkupPerWatt": 0.1,
-  "voltageLimitCap": 640,
+  "voltageLimitCap": 720,
   "expectedVACFactor": 0.6224,
   "defaults": {
     "requestedW": 200000,

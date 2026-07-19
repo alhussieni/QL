@@ -401,6 +401,9 @@ function renderAdminForms() {
   document.getElementById('cfgCurrencySymbol').value = DATA.meta.currencySymbol;
   document.getElementById('newAdminUsername').value = DATA.meta.adminUsername || '';
 
+  document.getElementById('cfgVoltageLimitCap').value = DATA.voltageLimitCap;
+  document.getElementById('cfgExpectedVACFactor').value = DATA.expectedVACFactor;
+
   // panels table - رتب الألواح الناقصة سعر أولاً عشان يسهل الوصول ليها وتعبئتها
   const panelsBody = document.querySelector('#panelsTable tbody');
   panelsBody.innerHTML = '';
@@ -574,6 +577,8 @@ function collectConstantsIntoData() {
   DATA.installation.supplyInstallFixedPerKW = Number(document.getElementById('cfgSupplyFixed').value);
   DATA.installation.supplyInstallRotationalPerKW = Number(document.getElementById('cfgSupplyRot').value);
   DATA.panelMarkupPerWatt = Number(document.getElementById('cfgPanelMarkup').value);
+  DATA.voltageLimitCap = Number(document.getElementById('cfgVoltageLimitCap').value);
+  DATA.expectedVACFactor = Number(document.getElementById('cfgExpectedVACFactor').value);
   DATA.meta.lastUpdated = new Date().toISOString().slice(0,10);
 }
 

@@ -289,6 +289,21 @@
       </div>
 
       <div class="card">
+        <h2><span class="num">∑</span> ثوابت المعادلات الهندسية <small style="font-size:11px; font-weight:600; color:var(--ink-faint);">(قابلة للتحديث الدوري)</small></h2>
+        <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">دي الثوابت اللي بتتغير في معادلات حساب عدد الألواح والسلاسل - عدّلها هنا وقت ما احتجت من غير ما تلمس الكود.</p>
+        <div class="row2">
+          <div class="field">
+            <label>الحد الأقصى لفولت السلسلة (V) <span class="hint">Voltage Limit Cap</span></label>
+            <input type="number" id="cfgVoltageLimitCap" step="1">
+          </div>
+          <div class="field">
+            <label>معامل الفولت المتوقع (VAC Factor)</label>
+            <input type="number" id="cfgExpectedVACFactor" step="0.0001">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
         <h2><span class="num">☀</span> جدول الألواح الشمسية</h2>
         <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">لازم كل لوح له سعر (جنيه/واط) عشان يظهر في اختيارات الحاسبة.</p>
         <p id="panelsMissingNote" style="font-size:12px; color:var(--sun); margin:0 0 10px; font-family:var(--mono);"></p>
