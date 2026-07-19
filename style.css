@@ -17,6 +17,31 @@
   --mono: 'JetBrains Mono', 'Courier New', monospace;
   --sans: 'Cairo', 'Tahoma', sans-serif;
   --radius: 12px;
+
+  /* ------------------------------------------------------------------
+     نظام القياسات: مبني على النسبة الذهبية (φ ≈ 1.618)
+     المسافات بتتابع فيبوناتشي (بيقرب من φ كل ما الأرقام كبرت) عشان
+     إيقاع بصري متناسق بين كل العناصر: 8 → 13 → 21 → 34 → 55 → 89
+     ------------------------------------------------------------------ */
+  --sp-1: 8px;
+  --sp-2: 13px;
+  --sp-3: 21px;
+  --sp-4: 34px;
+  --sp-5: 55px;
+  --sp-6: 89px;
+
+  /* تدرج الخطوط: العناصر التانوية بتاخد حجم عملي وقابل للقراءة،
+     والعناصر الرئيسية (العنوان + رقم السعر النهائي) بتاخد قفزة φ
+     عشان تبقى هي أهم حاجة في الصفحة بصريًا */
+  --fs-xs: 11px;
+  --fs-sm: 12.5px;
+  --fs-base: 14px;
+  --fs-md: 16px;
+  --fs-section: 15px;
+  --fs-hero: 36px;      /* = fs-base × φ² تقريبًا */
+  --fs-hero-mobile: 22px;
+  --fs-price: 58px;     /* = fs-base × φ³ تقريبًا - أهم رقم في الصفحة */
+  --fs-price-mobile: 34px;
 }
 
 *{box-sizing:border-box;}
@@ -40,7 +65,7 @@ a{color:inherit;}
 .topbar{
   position:sticky; top:0; z-index:50;
   display:flex; align-items:center; justify-content:space-between;
-  padding:14px 24px;
+  padding:var(--sp-2) var(--sp-3);
   background:rgba(253,252,250,0.92);
   backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
@@ -65,32 +90,36 @@ a{color:inherit;}
 .nav-btn:hover{color:var(--ink); background:var(--sun-soft);}
 .nav-btn.active{color:var(--sun-deep); background:var(--sun-soft); border-color:rgba(232,129,26,.25);}
 
-.wrap{max-width:1180px; margin:0 auto; padding:28px 24px 80px;}
+.wrap{max-width:1180px; margin:0 auto; padding:var(--sp-4) var(--sp-3) var(--sp-5);}
 .view{display:none;}
 .view.active{display:block; animation:rise .35s ease both;}
 @keyframes rise{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
 
-.hero{padding:6px 0 26px; border-bottom:1px dashed var(--line); margin-bottom:26px;}
+.hero{padding:var(--sp-1) 0 var(--sp-4); border-bottom:1px dashed var(--line); margin-bottom:var(--sp-4);}
 .hero .eyebrow{
   display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11.5px;
   color:var(--sun-deep); letter-spacing:.5px; margin-bottom:10px;
 }
 .hero .eyebrow::before{content:"◆"; font-size:9px;}
-.hero h1{font-size:26px; margin:0 0 8px; font-weight:800;}
+.hero h1{font-size:var(--fs-hero); margin:0 0 8px; font-weight:800; line-height:1.15;}
 .hero p{color:var(--ink-dim); margin:0; max-width:640px; font-size:14.5px;}
 
-.grid{display:grid; grid-template-columns: 1.1fr 1fr; gap:22px;}
+/* شبكة الحاسبة: عمود المدخلات أضيق (وحدة واحدة) وعمود النتائج أعرض
+   بمقدار φ (1.618) - لأن النتائج فيها الرقم الرئيسي وجدول تفصيلي
+   محتاج مساحة أكتر عشان يتقرأ بوضوح، بينما المدخلات نماذج مضغوطة
+   بطبيعتها وبتشتغل كويس في عمود أضيق */
+.grid{display:grid; grid-template-columns: 1fr 1.618fr; gap:var(--sp-4);}
 @media (max-width:960px){.grid{grid-template-columns:1fr;}}
 
 .card{
   background:var(--bg-card);
   border:1px solid var(--line); border-radius:var(--radius);
-  padding:22px;
+  padding:var(--sp-3);
   box-shadow:0 1px 3px rgba(43,38,32,0.04);
 }
-.card + .card{margin-top:18px;}
+.card + .card{margin-top:var(--sp-3);}
 .card h2{
-  font-size:14px; margin:0 0 16px; color:var(--ink); font-weight:800;
+  font-size:var(--fs-section); margin:0 0 16px; color:var(--ink); font-weight:800;
   display:flex; align-items:center; gap:8px; padding-bottom:12px; border-bottom:1px solid var(--line-soft);
 }
 .card h2 .num{
@@ -115,6 +144,16 @@ input:focus, select:focus, textarea:focus{
 }
 .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
 .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;}
+/* لاستخدامها لما حقلين جنب بعض يكون واحد منهم محتوى نصي أطول
+   (اسم، ماركة) والتاني رقم قصير - العمود الأول ياخد نصيب φ من
+   المساحة عشان يخدم الغرض منه (استيعاب نص أطول) بشكل أوضح */
+.row2-golden{display:grid; grid-template-columns:1.618fr 1fr; gap:12px;}
+@media (max-width:520px){ .row2-golden{grid-template-columns:1fr; } }
+
+/* صف بنفس منطق φ لكن معكوس (المساحة الأكبر يمين) - مستخدم في
+   لوحة الأدمن لما إعداد رئيسي (زي اسم الشركة) يكون جنب إعداد ثانوي */
+.row2-golden-r{display:grid; grid-template-columns:1fr 1.618fr; gap:12px;}
+@media (max-width:520px){ .row2-golden-r{grid-template-columns:1fr; } }
 
 .switch-row{
   display:flex; align-items:center; justify-content:space-between;
@@ -146,11 +185,11 @@ details.adv .adv-body{padding-top:8px;}
 .price-hero{
   background:linear-gradient(155deg, var(--sun-soft), #fffdf9);
   border:1px solid rgba(232,129,26,.28);
-  border-radius:var(--radius); padding:22px; text-align:center; margin-bottom:18px;
+  border-radius:var(--radius); padding:var(--sp-4) var(--sp-3); text-align:center; margin-bottom:var(--sp-3);
 }
-.price-hero .lbl{font-size:12px; color:var(--ink-dim); margin-bottom:6px; font-weight:600;}
-.price-hero .amt{font-size:34px; font-weight:800; font-family:var(--mono); color:var(--sun-deep); letter-spacing:-.5px;}
-.price-hero .sub{font-size:12px; color:var(--ink-faint); margin-top:8px; font-family:var(--mono);}
+.price-hero .lbl{font-size:12px; color:var(--ink-dim); margin-bottom:8px; font-weight:600;}
+.price-hero .amt{font-size:var(--fs-price); font-weight:800; font-family:var(--mono); color:var(--sun-deep); letter-spacing:-1px; line-height:1;}
+.price-hero .sub{font-size:12px; color:var(--ink-faint); margin-top:10px; font-family:var(--mono);}
 .price-hero .strike{text-decoration:line-through; color:var(--ink-faint); font-size:15px; margin-inline-start:8px;}
 
 .spec-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px;}
@@ -158,7 +197,7 @@ details.adv .adv-body{padding-top:8px;}
 .spec .k{font-size:10.5px; color:var(--ink-faint); font-family:var(--mono); margin-bottom:4px;}
 .spec .v{font-size:14px; font-weight:800; font-family:var(--mono);}
 
-table.offer{width:100%; border-collapse:collapse; font-size:12.8px;}
+table.offer{width:100%; border-collapse:collapse; font-size:13.5px;}
 table.offer th{
   text-align:right; color:var(--ink-faint); font-weight:700; font-size:11px;
   padding:8px 6px; border-bottom:1px solid var(--line);
@@ -203,6 +242,13 @@ table.offer tfoot td{padding-top:12px; font-weight:800;}
 .gate p{color:var(--ink-dim); font-size:13.5px; margin:0 0 20px;}
 .gate .field{text-align:right;}
 
+/* صف لوحة الأدمن: إعداد أساسي بيأثر على كل زوار الموقع (بيانات
+   الشركة) ياخد نصيب φ الأكبر، وإعداد ثانوي بيتظبط مرة واحدة بس
+   (بيانات الدخول) ياخد النصيب الأصغر - كل عنصر بحجم يعكس أهميته */
+.admin-top-row{display:grid; grid-template-columns:1.618fr 1fr; gap:var(--sp-3); align-items:stretch;}
+.admin-top-row > .card{margin-top:0;}
+@media (max-width:760px){ .admin-top-row{grid-template-columns:1fr;} }
+
 .admin-toolbar{
   display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
   margin-bottom:18px; padding:14px 18px; background:var(--bg-card); border:1px solid var(--line); border-radius:var(--radius);
@@ -239,7 +285,8 @@ table.offer tfoot td{padding-top:12px; font-weight:800;}
 @media(max-width:640px){
   .row3{grid-template-columns:1fr 1fr;}
   .spec-grid{grid-template-columns:repeat(2,1fr);}
-  .hero h1{font-size:21px;}
+  .hero h1{font-size:var(--fs-hero-mobile);}
+  .price-hero .amt{font-size:var(--fs-price-mobile);}
 }
 
 #printQuote{ display:none; }

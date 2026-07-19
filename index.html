@@ -39,7 +39,7 @@
       <div>
         <div class="card">
           <h2><span class="num">1</span> بيانات المشروع والقدرة</h2>
-          <div class="row2">
+          <div class="row2-golden">
             <div class="field">
               <label>اسم العميل / المشروع</label>
               <input type="text" id="clientName" placeholder="مثال: مزرعة السلام">
@@ -53,7 +53,7 @@
 
         <div class="card">
           <h2><span class="num">2</span> الألواح والانفرتر والشاسية</h2>
-          <div class="row2">
+          <div class="row2-golden">
             <div class="field">
               <label>ماركة اللوح الشمسي</label>
               <select id="panelBrand"></select>
@@ -248,22 +248,22 @@
         </div>
       </div>
 
-      <div class="card">
-        <h2><span class="num">i</span> بيانات الشركة</h2>
-        <div class="row2">
-          <div class="field"><label>اسم الشركة</label><input type="text" id="cfgCompanyName"></div>
-          <div class="field"><label>رمز العملة</label><input type="text" id="cfgCurrencySymbol"></div>
+      <div class="admin-top-row">
+        <div class="card">
+          <h2><span class="num">i</span> بيانات الشركة</h2>
+          <div class="row2-golden-r">
+            <div class="field"><label>اسم الشركة</label><input type="text" id="cfgCompanyName"></div>
+            <div class="field"><label>رمز العملة</label><input type="text" id="cfgCurrencySymbol"></div>
+          </div>
         </div>
-      </div>
 
-      <div class="card">
-        <h2><span class="num">🔑</span> تغيير بيانات دخول الأدمن</h2>
-        <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">بعد التغيير هنا لازم تضغط "حفظ التعديلات على GitHub" عشان البيانات الجديدة تتفعّل لكل الأجهزة.</p>
-        <div class="row2">
+        <div class="card">
+          <h2><span class="num">🔑</span> بيانات دخول الأدمن</h2>
+          <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">بعد التغيير اضغط "حفظ التعديلات على GitHub" عشان تتفعّل للجميع.</p>
           <div class="field"><label>اسم المستخدم الجديد</label><input type="text" id="newAdminUsername" autocomplete="off"></div>
           <div class="field"><label>كلمة المرور الجديدة</label><input type="password" id="newAdminPassword" autocomplete="new-password" placeholder="اتركه فارغًا لو مش عايز تغييره"></div>
+          <button class="btn ghost small" id="updateAdminCredsBtn" style="margin-top:6px;">تحديث بيانات الدخول</button>
         </div>
-        <button class="btn ghost small" id="updateAdminCredsBtn" style="margin-top:6px;">تحديث بيانات الدخول</button>
       </div>
 
       <div class="card">
