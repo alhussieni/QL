@@ -3,7 +3,7 @@
     "companyName": "الأصل للطاقة الشمسية",
     "currency": "جنيه مصري",
     "currencySymbol": "ج.م",
-    "lastUpdated": "2026-07-18",
+    "lastUpdated": "2026-07-19",
     "adminUsername": "admin",
     "adminPasswordHash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9"
   },
@@ -636,7 +636,7 @@
       "voc": 53.9,
       "iimp": 14.27,
       "isc": 15,
-      "price": 8
+      "price": 7.9
     },
     {
       "brand": "astro",
@@ -663,7 +663,7 @@
       "voc": 53.8,
       "iimp": 14.2,
       "isc": 14.94,
-      "price": 8
+      "price": 7.9
     },
     {
       "brand": "JA",
