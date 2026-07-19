@@ -175,6 +175,11 @@
           <div class="totals" id="totalsBlock"></div>
         </div>
 
+        <div class="card" id="profitCard" style="display:none; border-color:rgba(45,150,90,.45); background:rgba(45,150,90,.06);">
+          <h2><span class="num">🔐</span> التكلفة والربح <small style="font-size:11px; font-weight:600; color:var(--ink-faint);">(يظهر للأدمن فقط)</small></h2>
+          <div class="totals" id="profitBlock"></div>
+        </div>
+
         <div class="card">
           <h2><span class="num">%</span> شروط السداد</h2>
           <div id="paymentTerms"></div>
@@ -190,28 +195,44 @@
     <div id="admin-gate" class="gate">
       <div class="icon">🔒</div>
       <h2>دخول لوحة الأدمن</h2>
-      <p>لازم توكن GitHub بصلاحية الكتابة على الريبو عشان تقدر تحفظ التعديلات مباشرة للجميع. التوكن بيتخزن في المتصفح بتاعك فقط ومش بيتبعت لأي حد غير GitHub.</p>
+      <p>دخّل اسم المستخدم وكلمة المرور الخاصة بالأدمن.</p>
       <div class="field">
-        <label>مالك الريبو (Owner)</label>
-        <input type="text" id="ghOwner" placeholder="مثال: ahmed-solar">
-      </div>
-      <div class="field">
-        <label>اسم الريبو (Repo)</label>
-        <input type="text" id="ghRepo" placeholder="مثال: solar-quote-site">
+        <label>اسم المستخدم</label>
+        <input type="text" id="adminUsername" placeholder="admin" autocomplete="username">
       </div>
       <div class="field">
-        <label>الفرع (Branch)</label>
-        <input type="text" id="ghBranch" value="main">
+        <label>كلمة المرور</label>
+        <input type="password" id="adminPasswordInput" placeholder="••••••••" autocomplete="current-password">
       </div>
-      <div class="field">
-        <label>GitHub Token (Fine-grained, Contents: Read & Write)</label>
-        <input type="password" id="ghToken" placeholder="github_pat_...">
-      </div>
-      <div class="switch-row" style="justify-content:flex-start; gap:10px;">
-        <label class="switch"><input type="checkbox" id="rememberToken"><span class="track"></span><span class="thumb"></span></label>
-        <div class="lbl" style="font-size:12.5px;">تذكرني على هذا الجهاز (غير مستحسن على جهاز مشترك)</div>
-      </div>
-      <button class="btn" id="unlockAdminBtn" style="margin-top:10px;">دخول</button>
+
+      <details class="adv" style="margin-top:14px;">
+        <summary>إعدادات الاتصال بـ GitHub (تُملأ مرة واحدة فقط)</summary>
+        <div class="adv-body">
+          <p style="font-size:12.5px; color:var(--ink-dim); margin-top:0;">لازم توكن GitHub بصلاحية الكتابة على الريبو عشان تقدر تحفظ التعديلات مباشرة للجميع. التوكن بيتخزن في المتصفح بتاعك فقط ومش بيتبعت لأي حد غير GitHub.</p>
+          <div class="field">
+            <label>مالك الريبو (Owner)</label>
+            <input type="text" id="ghOwner" placeholder="مثال: ahmed-solar">
+          </div>
+          <div class="field">
+            <label>اسم الريبو (Repo)</label>
+            <input type="text" id="ghRepo" placeholder="مثال: solar-quote-site">
+          </div>
+          <div class="field">
+            <label>الفرع (Branch)</label>
+            <input type="text" id="ghBranch" value="main">
+          </div>
+          <div class="field">
+            <label>GitHub Token (Fine-grained, Contents: Read & Write)</label>
+            <input type="password" id="ghToken" placeholder="github_pat_...">
+          </div>
+          <div class="switch-row" style="justify-content:flex-start; gap:10px;">
+            <label class="switch"><input type="checkbox" id="rememberToken"><span class="track"></span><span class="thumb"></span></label>
+            <div class="lbl" style="font-size:12.5px;">تذكرني على هذا الجهاز (غير مستحسن على جهاز مشترك)</div>
+          </div>
+        </div>
+      </details>
+
+      <button class="btn" id="unlockAdminBtn" style="margin-top:14px;">دخول</button>
       <div class="field" style="margin-top:14px;">
         <button class="btn ghost small" id="offlineAdminBtn">تعديل بدون حفظ فوري (تنزيل JSON يدويًا)</button>
       </div>
@@ -233,6 +254,16 @@
           <div class="field"><label>اسم الشركة</label><input type="text" id="cfgCompanyName"></div>
           <div class="field"><label>رمز العملة</label><input type="text" id="cfgCurrencySymbol"></div>
         </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">🔑</span> تغيير بيانات دخول الأدمن</h2>
+        <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">بعد التغيير هنا لازم تضغط "حفظ التعديلات على GitHub" عشان البيانات الجديدة تتفعّل لكل الأجهزة.</p>
+        <div class="row2">
+          <div class="field"><label>اسم المستخدم الجديد</label><input type="text" id="newAdminUsername" autocomplete="off"></div>
+          <div class="field"><label>كلمة المرور الجديدة</label><input type="password" id="newAdminPassword" autocomplete="new-password" placeholder="اتركه فارغًا لو مش عايز تغييره"></div>
+        </div>
+        <button class="btn ghost small" id="updateAdminCredsBtn" style="margin-top:6px;">تحديث بيانات الدخول</button>
       </div>
 
       <div class="card">

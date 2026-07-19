@@ -3,6 +3,7 @@
    ========================================================================= */
 
 let DATA = null;
+let isAdmin = false;
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 
 function toast(msg, type) {
@@ -166,6 +167,31 @@ function recalc() {
   document.getElementById('paymentTerms').innerHTML = r.paymentTerms.map(t => `
     <div class="switch-row"><div class="lbl">${t.label} <small>${Math.round(t.pct*100)}%</small></div><div class="num" style="font-family:var(--mono); font-weight:700;">${fmt(t.amount)} ${sym}</div></div>
   `).join('');
+
+  updateProfitCard(r, sym);
+}
+
+/* ---------------------------- admin-only profit/cost card ---------------------------- */
+function updateProfitCard(r, sym) {
+  const card = document.getElementById('profitCard');
+  if (!isAdmin) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  if (!r.totals || !r.Calc) { document.getElementById('profitBlock').innerHTML = ''; return; }
+
+  const totalCost = r.Calc.totalMaterialCost;
+  const salePrice = r.totals.finalPrice;
+  const profit = salePrice - totalCost;
+  const marginPct = salePrice ? (profit / salePrice) * 100 : 0;   // هامش الربح من سعر البيع
+  const markupPct = totalCost ? (profit / totalCost) * 100 : 0;   // نسبة الزيادة على التكلفة
+
+  document.getElementById('profitBlock').innerHTML = `
+    <div class="line"><span>إجمالي التكلفة (خامات وتركيب)</span><span>${fmt(totalCost)} ${sym}</span></div>
+    <div class="line"><span>تكلفة الكيلوواط</span><span>${fmt(r.Calc.costPerKW)} ${sym}/KW</span></div>
+    <div class="line"><span>سعر البيع النهائي للعميل</span><span>${fmt(salePrice)} ${sym}</span></div>
+    <div class="line final"><span>صافي الربح</span><span>${fmt(profit)} ${sym}</span></div>
+    <div class="line"><span>هامش الربح (من سعر البيع)</span><span>${marginPct.toFixed(1)}%</span></div>
+    <div class="line"><span>نسبة الربح على التكلفة</span><span>${markupPct.toFixed(1)}%</span></div>
+  `;
 }
 
 loadData().catch(err => {
@@ -222,6 +248,23 @@ const GH = {
   owner: '', repo: '', branch: 'main', token: '', sha: null
 };
 
+async function sha256Hex(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function checkAdminCredentials() {
+  const uname = document.getElementById('adminUsername').value.trim();
+  const pwd = document.getElementById('adminPasswordInput').value;
+  if (!uname || !pwd) { toast('من فضلك أدخل اسم المستخدم وكلمة المرور', 'err'); return false; }
+  const pwdHash = await sha256Hex(pwd);
+  if (uname !== DATA.meta.adminUsername || pwdHash !== DATA.meta.adminPasswordHash) {
+    toast('اسم المستخدم أو كلمة المرور غير صحيحة', 'err');
+    return false;
+  }
+  return true;
+}
+
 function loadGhSettings() {
   const saved = localStorage.getItem('gh_settings');
   if (saved) {
@@ -231,6 +274,7 @@ function loadGhSettings() {
       document.getElementById('ghRepo').value = s.repo || '';
       document.getElementById('ghBranch').value = s.branch || 'main';
       if (s.token) { document.getElementById('ghToken').value = s.token; document.getElementById('rememberToken').checked = true; }
+      if (s.username) document.getElementById('adminUsername').value = s.username;
     } catch (e) {}
   }
   // Try auto-detect owner/repo from a typical *.github.io/<repo>/ URL
@@ -244,6 +288,8 @@ function loadGhSettings() {
 loadGhSettings();
 
 document.getElementById('unlockAdminBtn').addEventListener('click', async () => {
+  if (!(await checkAdminCredentials())) return;
+
   GH.owner = document.getElementById('ghOwner').value.trim();
   GH.repo = document.getElementById('ghRepo').value.trim();
   GH.branch = document.getElementById('ghBranch').value.trim() || 'main';
@@ -251,7 +297,10 @@ document.getElementById('unlockAdminBtn').addEventListener('click', async () => 
   if (!GH.owner || !GH.repo || !GH.token) { toast('من فضلك أدخل owner و repo و token', 'err'); return; }
 
   if (document.getElementById('rememberToken').checked) {
-    localStorage.setItem('gh_settings', JSON.stringify({ owner: GH.owner, repo: GH.repo, branch: GH.branch, token: GH.token }));
+    localStorage.setItem('gh_settings', JSON.stringify({
+      owner: GH.owner, repo: GH.repo, branch: GH.branch, token: GH.token,
+      username: document.getElementById('adminUsername').value.trim()
+    }));
   } else {
     localStorage.removeItem('gh_settings');
   }
@@ -269,7 +318,8 @@ document.getElementById('unlockAdminBtn').addEventListener('click', async () => 
   }
 });
 
-document.getElementById('offlineAdminBtn').addEventListener('click', () => {
+document.getElementById('offlineAdminBtn').addEventListener('click', async () => {
+  if (!(await checkAdminCredentials())) return;
   enterAdmin(false);
 });
 
@@ -287,17 +337,22 @@ function enterAdmin(connected) {
   document.getElementById('saveGithubBtn').style.display = connected ? '' : 'none';
   document.getElementById('saveGithubBtn2').style.display = connected ? '' : 'none';
   renderAdminForms();
+  isAdmin = true;
+  recalc(); // يظهر كارت التكلفة والربح في الحاسبة فورًا
 }
 
 document.getElementById('lockAdminBtn').addEventListener('click', () => {
   document.getElementById('admin-gate').style.display = 'block';
   document.getElementById('admin-panel').style.display = 'none';
+  isAdmin = false;
+  recalc(); // يخفي كارت التكلفة والربح بعد الخروج
 });
 
 /* ---------------------------- admin form rendering ---------------------------- */
 function renderAdminForms() {
   document.getElementById('cfgCompanyName').value = DATA.meta.companyName;
   document.getElementById('cfgCurrencySymbol').value = DATA.meta.currencySymbol;
+  document.getElementById('newAdminUsername').value = DATA.meta.adminUsername || '';
 
   // panels table - رتب الألواح الناقصة سعر أولاً عشان يسهل الوصول ليها وتعبئتها
   const panelsBody = document.querySelector('#panelsTable tbody');
@@ -512,3 +567,15 @@ async function saveToGithub() {
 }
 document.getElementById('saveGithubBtn').addEventListener('click', saveToGithub);
 document.getElementById('saveGithubBtn2').addEventListener('click', saveToGithub);
+
+document.getElementById('updateAdminCredsBtn').addEventListener('click', async () => {
+  const newUser = document.getElementById('newAdminUsername').value.trim();
+  const newPass = document.getElementById('newAdminPassword').value;
+  if (!newUser) { toast('اكتب اسم المستخدم', 'err'); return; }
+  DATA.meta.adminUsername = newUser;
+  if (newPass) {
+    DATA.meta.adminPasswordHash = await sha256Hex(newPass);
+  }
+  document.getElementById('newAdminPassword').value = '';
+  toast('تم تحديث بيانات الدخول - اضغط "حفظ التعديلات على GitHub" عشان تتفعّل للجميع', 'ok');
+});
