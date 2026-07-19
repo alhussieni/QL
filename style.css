@@ -14,7 +14,7 @@
   --leaf-soft: #e7f5ed;
   --danger: #d1453b;
   --danger-soft: #fbeae8;
-  --mono: 'JetBrains Mono', 'Courier New', monospace;
+  --mono: 'Cairo', 'Tahoma', sans-serif;
   --sans: 'Cairo', 'Tahoma', sans-serif;
   --radius: 12px;
 
@@ -40,8 +40,8 @@
   --fs-section: 15px;
   --fs-hero: 36px;      /* = fs-base × φ² تقريبًا */
   --fs-hero-mobile: 22px;
-  --fs-price: 58px;     /* = fs-base × φ³ تقريبًا - أهم رقم في الصفحة */
-  --fs-price-mobile: 34px;
+  --fs-price: 38px;
+  --fs-price-mobile: 26px;
 
   /* سطح غامق مميز لكارت "ملخص المنظومة" - بيفصله بصريًا كعنصر
      توقيعي (signature) عن باقي الكروت الفاتحة في الصفحة */
@@ -212,31 +212,31 @@ details.adv .adv-body{padding-top:8px;}
 /* كارت ملخص المنظومة: العنصر التوقيعي في الصفحة (سطح غامق مميز)
    الصندوق الرئيسي (السعر) ياخد نصيب φ الأكبر من مساحة الصف، وعمود
    الإحصائيات الثلاث ياخد النصيب الأصغر - نفس منطق الشبكة الرئيسية */
-.summary-card{background:var(--dark-bg); border-color:transparent; color:var(--dark-ink);}
-.summary-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--dark-line);}
-.summary-head h2{margin:0; padding:0; border:none; color:var(--dark-ink);}
+.summary-card{background:var(--dark-bg); border-color:transparent; color:var(--dark-ink); padding:var(--sp-2) var(--sp-3);}
+.summary-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--dark-line);}
+.summary-head h2{margin:0; padding:0; border:none; color:var(--dark-ink); font-size:13.5px;}
 .summary-head h2 .num{background:rgba(232,129,26,.18); border-color:rgba(232,129,26,.4); color:var(--sun);}
 .sum-badge{
-  font-family:var(--mono); font-size:11px; color:var(--dark-ink-dim);
+  font-family:var(--mono); font-size:10.5px; color:var(--dark-ink-dim);
   background:var(--dark-bg-soft); border:1px solid var(--dark-line);
-  padding:5px 12px; border-radius:20px;
+  padding:4px 10px; border-radius:20px;
 }
-.summary-body{display:flex; gap:var(--sp-3); align-items:stretch; flex-wrap:wrap;}
+.summary-body{display:flex; gap:var(--sp-2); align-items:stretch; flex-wrap:wrap;}
 .summary-price{
-  flex:1.618 1 260px; background:rgba(0,0,0,.2); border-radius:10px;
-  padding:var(--sp-3); text-align:center; display:flex; flex-direction:column; justify-content:center;
+  flex:1.618 1 220px; background:rgba(0,0,0,.2); border-radius:8px;
+  padding:12px var(--sp-2); text-align:center; display:flex; flex-direction:column; justify-content:center;
 }
-.summary-price .lbl{font-size:12px; color:var(--dark-ink-dim); margin-bottom:8px; font-weight:600;}
-.summary-price .amt{font-size:var(--fs-price); font-weight:800; font-family:var(--mono); color:var(--sun); letter-spacing:-1px; line-height:1;}
-.summary-price .sub{font-size:12px; color:var(--dark-ink-dim); margin-top:10px; font-family:var(--mono);}
-.summary-price .strike{text-decoration:line-through; color:var(--dark-ink-dim); font-size:15px; margin-inline-start:8px;}
-.summary-stats{flex:1 1 160px; display:flex; flex-direction:column; gap:var(--sp-2); justify-content:center;}
+.summary-price .lbl{font-size:11px; color:var(--dark-ink-dim); margin-bottom:5px; font-weight:600;}
+.summary-price .amt{font-size:var(--fs-price); font-weight:800; font-family:var(--mono); color:var(--sun); letter-spacing:-.5px; line-height:1;}
+.summary-price .sub{font-size:11px; color:var(--dark-ink-dim); margin-top:6px; font-family:var(--mono);}
+.summary-price .strike{text-decoration:line-through; color:var(--dark-ink-dim); font-size:13px; margin-inline-start:8px;}
+.summary-stats{flex:1 1 150px; display:flex; flex-direction:column; gap:8px; justify-content:center;}
 .summary-stats .stat{
-  background:var(--dark-bg-soft); border:1px solid var(--dark-line); border-radius:8px;
-  padding:12px 14px; text-align:center;
+  background:var(--dark-bg-soft); border:1px solid var(--dark-line); border-radius:7px;
+  padding:8px 12px; text-align:center;
 }
-.summary-stats .stat .v{font-size:19px; font-weight:800; font-family:var(--mono); color:var(--dark-ink);}
-.summary-stats .stat .k{font-size:10.5px; color:var(--dark-ink-dim); margin-top:4px; font-family:var(--mono);}
+.summary-stats .stat .v{font-size:15px; font-weight:800; font-family:var(--mono); color:var(--dark-ink);}
+.summary-stats .stat .k{font-size:10px; color:var(--dark-ink-dim); margin-top:2px; font-family:var(--mono);}
 @media (max-width:640px){ .summary-price .amt{font-size:var(--fs-price-mobile);} }
 
 .spec-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px;}

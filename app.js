@@ -111,7 +111,31 @@ function readInputs() {
 }
 
 let LAST_RESULT = null;
-let quoteCounter = 1;
+
+function sanitizeFilenamePart(s) {
+  return String(s).replace(/[\/\\:*?"<>|]/g, '').trim();
+}
+
+/* تسمية عرض السعر/الملف حسب الصيغة المطلوبة:
+   QL-تاريخ العرض-P (نظام مضخات)-قدرة الموتور HP-موديل الانفرتر بقدرته HP/KW-
+   ماركة اللوح وقدرته بالوات-نوع الشاسية (FIXED/ROTATIONAL)-اسم العميل-رقم الهاتف */
+function buildQuoteFilename(r, inputs) {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const now = new Date();
+  const dateStr = `${String(now.getDate()).padStart(2,'0')}${months[now.getMonth()]}${now.getFullYear()}`;
+
+  const motorHP = `${r.H13} HP`;
+  const invSeg = `${inputs.inverterBrand} ${r.H14.text}`;
+  const panelSeg = `${inputs.panelBrand}${inputs.panelPower}`;
+  const steelSeg = inputs.structureType;
+  const clientName = document.getElementById('clientName').value.trim() || 'Client';
+  const clientPhone = document.getElementById('clientPhone').value.trim();
+
+  const parts = ['QL', dateStr, 'P', motorHP, invSeg, panelSeg, steelSeg, clientName, clientPhone]
+    .filter(p => p !== '')
+    .map(sanitizeFilenamePart);
+  return parts.join('-');
+}
 
 function recalc() {
   if (!DATA) return;
@@ -220,7 +244,8 @@ function preparePrintAndPrint() {
   const sym = DATA.meta.currencySymbol;
   const inputs = readInputs();
 
-  document.getElementById('pqQuoteNo').textContent = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(quoteCounter++).padStart(3,'0');
+  const quoteFilename = buildQuoteFilename(r, inputs);
+  document.getElementById('pqQuoteNo').textContent = quoteFilename;
   document.getElementById('pqDate').textContent = new Date().toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' });
   document.getElementById('pqClient').textContent = document.getElementById('clientName').value || 'غير محدد';
   document.getElementById('pqPhone').textContent = document.getElementById('clientPhone').value || 'غير محدد';
@@ -253,7 +278,13 @@ function preparePrintAndPrint() {
     <div class="row"><span>${t.label} (${Math.round(t.pct*100)}%)</span><span>${fmt(t.amount)} ${sym}</span></div>
   `).join('');
 
+  const prevTitle = document.title;
+  document.title = quoteFilename;
   window.print();
+  window.addEventListener('afterprint', function restoreTitle() {
+    document.title = prevTitle;
+    window.removeEventListener('afterprint', restoreTitle);
+  });
 }
 
 /* =========================================================================
