@@ -155,7 +155,7 @@ function computeOffer(data, inputs) {
   const combinerRow = findCombinerRow(data, H6);
   const combinerDiscounted = combinerRow.listPrice * (1 - data.combinerBox.discount);
   const stringsPerBox = data.combinerBox.stringsPerBox || 6;
-  const combinerQty = inputs.solarEnabled && H6 > 0 ? Math.ceil(H6 / stringsPerBox) : 0;
+  const combinerQty = inputs.combinerEnabled && inputs.solarEnabled && H6 > 0 ? Math.ceil(H6 / stringsPerBox) : 0;
   Calc.combinerCost = combinerDiscounted * combinerQty;
   Calc.combinerUnitPrice = combinerDiscounted;
   Calc.combinerQty = combinerQty;

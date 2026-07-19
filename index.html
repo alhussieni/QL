@@ -39,10 +39,14 @@
       <div>
         <div class="card">
           <h2><span class="num">1</span> بيانات المشروع والقدرة</h2>
-          <div class="row2-golden">
+          <div class="field">
+            <label>اسم العميل / المشروع</label>
+            <input type="text" id="clientName" placeholder="مثال: مزرعة السلام">
+          </div>
+          <div class="row2">
             <div class="field">
-              <label>اسم العميل / المشروع</label>
-              <input type="text" id="clientName" placeholder="مثال: مزرعة السلام">
+              <label>رقم الهاتف / واتساب للتواصل</label>
+              <input type="tel" id="clientPhone" placeholder="01xxxxxxxxx" inputmode="tel">
             </div>
             <div class="field">
               <label>القدرة المطلوبة (كيلوواط) <span class="hint">Requested KW</span></label>
@@ -63,21 +67,12 @@
               <select id="panelPower"></select>
             </div>
           </div>
-          <div class="row2">
-            <div class="field">
-              <label>نوع الشاسية</label>
-              <select id="structureType">
-                <option value="FIXED">ثابت (Fixed)</option>
-                <option value="ROTATIONAL">متحرك (Rotational)</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>ماركة الحديد (للمتحرك فقط)</label>
-              <select id="steelBrand">
-                <option value="semco">Semco</option>
-                <option value="elmotaheda">الموحدة</option>
-              </select>
-            </div>
+          <div class="field">
+            <label>نوع الشاسية</label>
+            <select id="structureType">
+              <option value="FIXED">ثابت (Fixed)</option>
+              <option value="ROTATIONAL">متحرك (Rotational)</option>
+            </select>
           </div>
           <div class="field">
             <label>ماركة الانفرتر</label>
@@ -116,8 +111,8 @@
             <label class="switch"><input type="checkbox" id="supplyInstallEnabled" checked><span class="track"></span><span class="thumb"></span></label>
           </div>
           <div class="switch-row">
-            <div class="lbl">صناديق التجميع (Combiner Box)</div>
-            <div style="font-family:var(--mono); font-weight:800; font-size:15px; color:var(--sun-deep);" id="combinerAutoQty">0</div>
+            <div class="lbl">صناديق التجميع (Combiner Box) <small id="combinerAutoQty"></small></div>
+            <label class="switch"><input type="checkbox" id="combinerEnabled" checked><span class="track"></span><span class="thumb"></span></label>
           </div>
 
           <details class="adv">
@@ -153,10 +148,37 @@
           <div id="errorsList" style="font-size:13px; color:var(--ink-dim);"></div>
         </div>
 
-        <div class="price-hero">
-          <div class="lbl">الإجمالي النهائي (شامل الخصم، غير شامل ض.ق.م)</div>
-          <div class="amt" id="finalPriceOut">0 ج.م</div>
-          <div class="sub"><span id="beforeDiscountOut"></span> <span id="pricePerKWOut"></span></div>
+        <div class="card doc-header">
+          <div class="doc-header-brand">
+            <div class="brand-mark"><img src="logo.png" alt="" onerror="this.style.display='none'; this.parentElement.innerHTML='☀';"></div>
+            <div class="doc-header-name">
+              <b id="docCompanyName">-</b>
+              <span id="docCompanyTagline"></span>
+            </div>
+          </div>
+          <div class="doc-header-meta">
+            <div class="cell"><span class="k">تاريخ العرض</span><span class="v" id="docQuoteDate">-</span></div>
+            <div class="cell"><span class="k">عرض سعر مقدم إلى</span><span class="v" id="docClientNameOut">غير محدد</span></div>
+          </div>
+        </div>
+
+        <div class="card summary-card">
+          <div class="summary-head">
+            <h2><span class="num">◆</span> ملخص المنظومة</h2>
+            <span class="badge sum-badge" id="summaryBadge"></span>
+          </div>
+          <div class="summary-body">
+            <div class="summary-price">
+              <div class="lbl">الإجمالي النهائي (غير شامل ض.ق.م)</div>
+              <div class="amt" id="finalPriceOut">0 ج.م</div>
+              <div class="sub"><span id="beforeDiscountOut"></span></div>
+            </div>
+            <div class="summary-stats">
+              <div class="stat"><div class="v" id="statPricePerKW">-</div><div class="k" id="statPricePerKWLabel">-</div></div>
+              <div class="stat"><div class="v" id="statPanelCount">-</div><div class="k">عدد الألواح</div></div>
+              <div class="stat"><div class="v" id="statKW">-</div><div class="k">KW القدرة الفعلية</div></div>
+            </div>
+          </div>
         </div>
 
         <div class="card">
@@ -401,6 +423,10 @@
       <div class="box">
         <div class="k">العميل / المشروع</div>
         <div class="v" id="pqClient">-</div>
+      </div>
+      <div class="box">
+        <div class="k">رقم الهاتف / واتساب</div>
+        <div class="v" id="pqPhone">-</div>
       </div>
       <div class="box">
         <div class="k">القدرة المطلوبة</div>

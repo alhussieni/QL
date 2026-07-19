@@ -30,6 +30,8 @@ async function loadData() {
   const res = await fetch('./data.json' + cacheBust);
   DATA = await res.json();
   document.getElementById('companyNameTop').textContent = DATA.meta.companyName;
+  document.getElementById('docCompanyName').textContent = DATA.meta.companyName;
+  document.getElementById('docQuoteDate').textContent = new Date().toLocaleDateString('ar-EG', { year:'numeric', month:'2-digit', day:'2-digit' });
   populateSelectors();
   bindInputs();
   recalc();
@@ -60,6 +62,7 @@ function populateSelectors() {
   document.getElementById('earthingEnabled').checked = DATA.defaults.earthingEnabled;
   document.getElementById('reactorEnabled').checked = DATA.defaults.reactorEnabled;
   document.getElementById('supplyInstallEnabled').checked = DATA.defaults.supplyInstallEnabled;
+  document.getElementById('combinerEnabled').checked = DATA.defaults.combinerEnabled !== false;
 }
 
 function populatePanelPowers() {
@@ -72,10 +75,10 @@ function populatePanelPowers() {
 
 function bindInputs() {
   document.getElementById('panelBrand').addEventListener('change', () => { populatePanelPowers(); recalc(); });
-  const ids = ['requestedKW','panelPower','structureType','steelBrand','inverterBrand',
+  const ids = ['requestedKW','panelPower','structureType','inverterBrand',
     'solarEnabled','structureEnabled','inverterEnabled','cablesEnabled','earthingEnabled',
-    'reactorEnabled','supplyInstallEnabled','decreasePanelsPerString',
-    'decreaseStrings','increaseInverterHP','extraDiscountPercent','clientName'];
+    'reactorEnabled','supplyInstallEnabled','combinerEnabled','decreasePanelsPerString',
+    'decreaseStrings','increaseInverterHP','extraDiscountPercent','clientName','clientPhone'];
   ids.forEach(id => {
     const el = document.getElementById(id);
     el.addEventListener('input', recalc);
@@ -91,7 +94,6 @@ function readInputs() {
     panelBrand: g('panelBrand').value,
     panelPower: g('panelPower').value,
     structureType: g('structureType').value,
-    steelBrand: g('steelBrand').value,
     inverterBrand: g('inverterBrand').value,
     solarEnabled: g('solarEnabled').checked,
     structureEnabled: g('structureEnabled').checked,
@@ -100,6 +102,7 @@ function readInputs() {
     earthingEnabled: g('earthingEnabled').checked,
     reactorEnabled: g('reactorEnabled').checked,
     supplyInstallEnabled: g('supplyInstallEnabled').checked,
+    combinerEnabled: g('combinerEnabled').checked,
     decreasePanelsPerString: g('decreasePanelsPerString').value,
     decreaseStrings: g('decreaseStrings').value,
     increaseInverterHP: g('increaseInverterHP').value,
@@ -125,11 +128,23 @@ function recalc() {
   }
 
   const sym = DATA.meta.currencySymbol;
-  document.getElementById('combinerAutoQty').textContent = `${r.combinerQty} × ${fmt(r.Calc.combinerUnitPrice)} ${sym}`;
+  document.getElementById('combinerAutoQty').textContent = inputs.combinerEnabled
+    ? `${r.combinerQty} × ${fmt(r.Calc.combinerUnitPrice)} ${sym}`
+    : 'غير مطلوب';
   document.getElementById('finalPriceOut').textContent = `${fmt(r.totals.finalPrice)} ${sym}`;
   document.getElementById('beforeDiscountOut').innerHTML =
     r.totals.discount > 0 ? `<span class="strike">${fmt(r.totals.beforeDiscount)}</span>` : '';
-  document.getElementById('pricePerKWOut').textContent = ` · ${fmt(r.totals.pricePerKW)} ${sym}/كيلوواط`;
+
+  const clientNameVal = document.getElementById('clientName').value.trim();
+  const clientPhoneVal = document.getElementById('clientPhone').value.trim();
+  document.getElementById('docClientNameOut').textContent = clientNameVal
+    ? (clientPhoneVal ? `${clientNameVal} · ${clientPhoneVal}` : clientNameVal)
+    : 'غير محدد';
+  document.getElementById('summaryBadge').textContent = `${inputs.inverterBrand} ${r.H8.toFixed(0)} KW`;
+  document.getElementById('statPricePerKW').textContent = fmt(r.totals.pricePerKW);
+  document.getElementById('statPricePerKWLabel').textContent = `${sym}/KW`;
+  document.getElementById('statPanelCount').textContent = fmt(r.H7);
+  document.getElementById('statKW').textContent = r.H8.toFixed(1);
 
   // specs
   const specs = [
@@ -208,6 +223,7 @@ function preparePrintAndPrint() {
   document.getElementById('pqQuoteNo').textContent = 'Q-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(quoteCounter++).padStart(3,'0');
   document.getElementById('pqDate').textContent = new Date().toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' });
   document.getElementById('pqClient').textContent = document.getElementById('clientName').value || 'غير محدد';
+  document.getElementById('pqPhone').textContent = document.getElementById('clientPhone').value || 'غير محدد';
   document.getElementById('pqRequestedKW').textContent = `${(Number(inputs.requestedW)/1000).toLocaleString('en-US')} كيلوواط`;
   document.getElementById('pqStructureType').textContent = inputs.structureType === 'FIXED' ? 'ثابت (Fixed)' : 'متحرك (Rotational)';
 

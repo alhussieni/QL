@@ -42,6 +42,14 @@
   --fs-hero-mobile: 22px;
   --fs-price: 58px;     /* = fs-base × φ³ تقريبًا - أهم رقم في الصفحة */
   --fs-price-mobile: 34px;
+
+  /* سطح غامق مميز لكارت "ملخص المنظومة" - بيفصله بصريًا كعنصر
+     توقيعي (signature) عن باقي الكروت الفاتحة في الصفحة */
+  --dark-bg: #221d16;
+  --dark-bg-soft: rgba(255,255,255,.05);
+  --dark-line: rgba(255,255,255,.09);
+  --dark-ink: #f6efe3;
+  --dark-ink-dim: #cabb9f;
 }
 
 *{box-sizing:border-box;}
@@ -182,18 +190,57 @@ details.adv summary::before{content:"▸"; transition:.15s;}
 details.adv[open] summary::before{transform:rotate(90deg);}
 details.adv .adv-body{padding-top:8px;}
 
-.price-hero{
-  background:linear-gradient(155deg, var(--sun-soft), #fffdf9);
-  border:1px solid rgba(232,129,26,.28);
-  border-radius:var(--radius); padding:var(--sp-4) var(--sp-3); text-align:center; margin-bottom:var(--sp-3);
+/* بطاقة رأس المستند: اسم الشركة/اللوجو + تاريخ العرض + اسم العميل -
+   بتظهر أعلى نتائج عرض السعر مباشرة زي ترويسة مستند رسمي */
+.doc-header{
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:var(--sp-2);
+  background:linear-gradient(155deg, var(--leaf-soft), #fbfdfb);
+  border-color:rgba(63,157,104,.25);
+  padding:var(--sp-2) var(--sp-3);
 }
-.price-hero .lbl{font-size:12px; color:var(--ink-dim); margin-bottom:8px; font-weight:600;}
-.price-hero .amt{font-size:var(--fs-price); font-weight:800; font-family:var(--mono); color:var(--sun-deep); letter-spacing:-1px; line-height:1;}
-.price-hero .sub{font-size:12px; color:var(--ink-faint); margin-top:10px; font-family:var(--mono);}
-.price-hero .strike{text-decoration:line-through; color:var(--ink-faint); font-size:15px; margin-inline-start:8px;}
+.doc-header-brand{display:flex; align-items:center; gap:12px;}
+.doc-header-brand .brand-mark{width:42px; height:42px; font-size:20px;}
+.doc-header-name{display:flex; flex-direction:column; line-height:1.35;}
+.doc-header-name b{font-size:14.5px; font-weight:800;}
+.doc-header-name span{font-size:11px; color:var(--ink-faint); font-family:var(--mono);}
+.doc-header-meta{display:flex; gap:var(--sp-4);}
+.doc-header-meta .cell{display:flex; flex-direction:column; gap:3px; text-align:center;}
+.doc-header-meta .k{font-size:10.5px; color:var(--ink-faint); font-family:var(--mono);}
+.doc-header-meta .v{font-size:13px; font-weight:700; color:var(--ink);}
+@media (max-width:560px){ .doc-header{justify-content:flex-start;} .doc-header-meta{gap:var(--sp-3);} }
+
+/* كارت ملخص المنظومة: العنصر التوقيعي في الصفحة (سطح غامق مميز)
+   الصندوق الرئيسي (السعر) ياخد نصيب φ الأكبر من مساحة الصف، وعمود
+   الإحصائيات الثلاث ياخد النصيب الأصغر - نفس منطق الشبكة الرئيسية */
+.summary-card{background:var(--dark-bg); border-color:transparent; color:var(--dark-ink);}
+.summary-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--dark-line);}
+.summary-head h2{margin:0; padding:0; border:none; color:var(--dark-ink);}
+.summary-head h2 .num{background:rgba(232,129,26,.18); border-color:rgba(232,129,26,.4); color:var(--sun);}
+.sum-badge{
+  font-family:var(--mono); font-size:11px; color:var(--dark-ink-dim);
+  background:var(--dark-bg-soft); border:1px solid var(--dark-line);
+  padding:5px 12px; border-radius:20px;
+}
+.summary-body{display:flex; gap:var(--sp-3); align-items:stretch; flex-wrap:wrap;}
+.summary-price{
+  flex:1.618 1 260px; background:rgba(0,0,0,.2); border-radius:10px;
+  padding:var(--sp-3); text-align:center; display:flex; flex-direction:column; justify-content:center;
+}
+.summary-price .lbl{font-size:12px; color:var(--dark-ink-dim); margin-bottom:8px; font-weight:600;}
+.summary-price .amt{font-size:var(--fs-price); font-weight:800; font-family:var(--mono); color:var(--sun); letter-spacing:-1px; line-height:1;}
+.summary-price .sub{font-size:12px; color:var(--dark-ink-dim); margin-top:10px; font-family:var(--mono);}
+.summary-price .strike{text-decoration:line-through; color:var(--dark-ink-dim); font-size:15px; margin-inline-start:8px;}
+.summary-stats{flex:1 1 160px; display:flex; flex-direction:column; gap:var(--sp-2); justify-content:center;}
+.summary-stats .stat{
+  background:var(--dark-bg-soft); border:1px solid var(--dark-line); border-radius:8px;
+  padding:12px 14px; text-align:center;
+}
+.summary-stats .stat .v{font-size:19px; font-weight:800; font-family:var(--mono); color:var(--dark-ink);}
+.summary-stats .stat .k{font-size:10.5px; color:var(--dark-ink-dim); margin-top:4px; font-family:var(--mono);}
+@media (max-width:640px){ .summary-price .amt{font-size:var(--fs-price-mobile);} }
 
 .spec-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px;}
-.spec{ background:var(--bg-panel); border:1px solid var(--line-soft); border-radius:8px; padding:10px 12px; }
+.spec{ background:var(--bg-panel); border:1px solid rgba(63,157,104,.3); border-radius:8px; padding:10px 12px; }
 .spec .k{font-size:10.5px; color:var(--ink-faint); font-family:var(--mono); margin-bottom:4px;}
 .spec .v{font-size:14px; font-weight:800; font-family:var(--mono);}
 
@@ -286,7 +333,6 @@ table.offer tfoot td{padding-top:12px; font-weight:800;}
   .row3{grid-template-columns:1fr 1fr;}
   .spec-grid{grid-template-columns:repeat(2,1fr);}
   .hero h1{font-size:var(--fs-hero-mobile);}
-  .price-hero .amt{font-size:var(--fs-price-mobile);}
 }
 
 #printQuote{ display:none; }
