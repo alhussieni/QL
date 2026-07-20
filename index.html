@@ -454,27 +454,15 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- ======================= MODAL: إضافة لوح جديد ======================= -->
-<div class="modal-overlay" id="addPanelModal">
+<!-- ======================= MODAL عام: إضافة أي منتج (لوح / انفرتر / كابل / ...) ======================= -->
+<div class="modal-overlay" id="genericModal">
   <div class="modal-box">
-    <h3>إضافة لوح شمسي جديد</h3>
-    <p class="modal-sub">البيانات دي هتتضاف كصف جديد في الجدول من غير ما تلمس أي صف موجود.</p>
-    <div class="row2">
-      <div class="field"><label>الماركة *</label><input type="text" id="npBrand" placeholder="مثال: JA"></div>
-      <div class="field"><label>القدرة (واط) *</label><input type="number" id="npPower" step="1" placeholder="مثال: 620"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label>Vimp (V) *</label><input type="number" id="npVimp" step="0.01"></div>
-      <div class="field"><label>Voc (V) *</label><input type="number" id="npVoc" step="0.01"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label>I imp (A)</label><input type="number" id="npIimp" step="0.01"></div>
-      <div class="field"><label>I sc (A)</label><input type="number" id="npIsc" step="0.01"></div>
-    </div>
-    <div class="field"><label>السعر (جنيه/واط) <span class="hint">اختياري - سيبه فاضي لو لسه مش معروف</span></label><input type="number" id="npPrice" step="0.01"></div>
+    <h3 id="gmTitle">-</h3>
+    <p class="modal-sub" id="gmSub"></p>
+    <div id="gmFields"></div>
     <div class="modal-actions">
-      <button class="btn ghost" id="addPanelCancelBtn">إلغاء</button>
-      <button class="btn" id="addPanelConfirmBtn">إضافة اللوح</button>
+      <button class="btn ghost" id="gmCancelBtn">إلغاء</button>
+      <button class="btn" id="gmConfirmBtn">حفظ</button>
     </div>
   </div>
 </div>

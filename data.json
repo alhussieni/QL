@@ -117,7 +117,7 @@
       "price": null
     },
     {
-      "brand": "suntech",
+      "brand": "Suntech",
       "power": 540,
       "vimp": 41.75,
       "voc": 49.54,
@@ -126,7 +126,7 @@
       "price": null
     },
     {
-      "brand": "suntech",
+      "brand": "Suntech",
       "power": 555,
       "vimp": 42.24,
       "voc": 50.07,
@@ -630,7 +630,7 @@
       "price": null
     },
     {
-      "brand": "aiko",
+      "brand": "Aiko",
       "power": 645,
       "vimp": 45.2,
       "voc": 53.9,
@@ -639,7 +639,7 @@
       "price": 8
     },
     {
-      "brand": "astro",
+      "brand": "Astro",
       "power": 610,
       "vimp": null,
       "voc": null,
@@ -648,7 +648,7 @@
       "price": 0
     },
     {
-      "brand": "astro",
+      "brand": "Astro",
       "power": 715,
       "vimp": null,
       "voc": null,
@@ -657,7 +657,7 @@
       "price": 8
     },
     {
-      "brand": "aiko",
+      "brand": "Aiko",
       "power": 640,
       "vimp": 45.1,
       "voc": 53.8,
@@ -799,109 +799,109 @@
         "listPrice": 390000
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 0.75,
         "hp": 1,
         "listPrice": 7700
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 1.5,
         "hp": 2,
         "listPrice": 8000
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 2.2,
         "hp": 3,
         "listPrice": 9600
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 4,
         "hp": 5.5,
         "listPrice": 10600
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 5.5,
         "hp": 7.5,
         "listPrice": 14000
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 7.5,
         "hp": 10,
         "listPrice": 15200
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 10,
         "hp": 15,
         "listPrice": 19700
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 15,
         "hp": 20,
         "listPrice": 22600
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 18.5,
         "hp": 25,
         "listPrice": 29400
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 22,
         "hp": 30,
         "listPrice": 35600
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 30,
         "hp": 40,
         "listPrice": 44400
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 37,
         "hp": 50,
         "listPrice": 53200
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 45,
         "hp": 60,
         "listPrice": 68400
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 55,
         "hp": 75,
         "listPrice": 75700
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 75,
         "hp": 100,
         "listPrice": 86300
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 90,
         "hp": 125,
         "listPrice": 106200
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 110,
         "hp": 150,
         "listPrice": 121600
       },
       {
-        "brand": "delixi",
+        "brand": "Delixi",
         "kw": 132,
         "hp": 180,
         "listPrice": 156200

@@ -559,60 +559,185 @@ function simpleRow(obj, i, f1, f2, arr) {
 
 document.getElementById('invBrandFilter').addEventListener('change', renderAdminForms);
 document.getElementById('panelsFilter').addEventListener('change', renderAdminForms);
-function openAddPanelModal() {
-  ['npBrand','npPower','npVimp','npVoc','npIimp','npIsc','npPrice'].forEach(id => { document.getElementById(id).value = ''; });
-  document.getElementById('addPanelModal').classList.add('show');
-  document.getElementById('npBrand').focus();
-}
-function closeAddPanelModal() {
-  document.getElementById('addPanelModal').classList.remove('show');
-}
-document.getElementById('addPanelBtn').addEventListener('click', openAddPanelModal);
-document.getElementById('addPanelCancelBtn').addEventListener('click', closeAddPanelModal);
-document.getElementById('addPanelModal').addEventListener('click', (e) => {
-  if (e.target.id === 'addPanelModal') closeAddPanelModal();
-});
-document.getElementById('addPanelConfirmBtn').addEventListener('click', () => {
-  const brand = document.getElementById('npBrand').value.trim();
-  const power = Number(document.getElementById('npPower').value);
-  const vimp = Number(document.getElementById('npVimp').value);
-  const voc = Number(document.getElementById('npVoc').value);
-  if (!brand || !power || !vimp || !voc) {
-    toast('من فضلك أكمل الماركة والقدرة و Vimp و Voc على الأقل', 'err');
-    return;
-  }
-  const iimp = Number(document.getElementById('npIimp').value) || 0;
-  const isc = Number(document.getElementById('npIsc').value) || 0;
-  const priceVal = document.getElementById('npPrice').value.trim();
-  const price = priceVal === '' ? null : Number(priceVal);
+/* ============================================================
+   نافذة منبثقة عامة لإضافة أي منتج (لوح / انفرتر / كابل / صندوق
+   تجميع / ريأكتور / قاطع) - بدل التعديل المباشر جوه الجدول، وكل
+   نافذة فيها زر "حفظ" و"إلغاء" واضحين
+   ============================================================ */
+let gmOnConfirm = null;
 
-  DATA.panels.push({ brand, power, vimp, voc, iimp, isc, price });
-  closeAddPanelModal();
-  document.getElementById('panelsFilter').value = 'all';
-  renderAdminForms();
-  toast('تمت إضافة اللوح - متنساش تحفظ التعديلات', 'ok');
+function gmFieldHtml(f) {
+  if (f.type === 'select') {
+    return `<div class="field"><label>${f.label}</label><select id="${f.id}">${
+      f.options.map(o => `<option value="${o}" ${o === f.selected ? 'selected' : ''}>${o}</option>`).join('')
+    }</select></div>`;
+  }
+  return `<div class="field"><label>${f.label}</label><input type="${f.type || 'text'}" id="${f.id}"
+    ${f.step ? `step="${f.step}"` : ''} placeholder="${f.placeholder || ''}" ${f.list ? `list="${f.list}"` : ''}></div>`;
+}
+
+function openModal({ title, sub, fields, datalist, onConfirm }) {
+  document.getElementById('gmTitle').textContent = title;
+  document.getElementById('gmSub').textContent = sub || '';
+  let rows = '';
+  for (let i = 0; i < fields.length; i += 2) {
+    rows += `<div class="row2">${fields.slice(i, i + 2).map(gmFieldHtml).join('')}</div>`;
+  }
+  document.getElementById('gmFields').innerHTML = (datalist || '') + rows;
+  gmOnConfirm = onConfirm;
+  document.getElementById('genericModal').classList.add('show');
+  const firstInput = document.getElementById('gmFields').querySelector('input,select');
+  if (firstInput) firstInput.focus();
+}
+function closeModal() {
+  document.getElementById('genericModal').classList.remove('show');
+  gmOnConfirm = null;
+}
+document.getElementById('gmCancelBtn').addEventListener('click', closeModal);
+document.getElementById('genericModal').addEventListener('click', (e) => {
+  if (e.target.id === 'genericModal') closeModal();
 });
+document.getElementById('gmConfirmBtn').addEventListener('click', () => { if (gmOnConfirm) gmOnConfirm(); });
+
+const gmVal = id => document.getElementById(id).value.trim();
+const gmNum = id => Number(document.getElementById(id).value);
+
+/* ---- إضافة لوح شمسي ---- */
+document.getElementById('addPanelBtn').addEventListener('click', () => {
+  const existingBrands = [...new Set(DATA.panels.map(p => p.brand))].sort((a,b) => a.localeCompare(b,'ar'));
+  openModal({
+    title: 'إضافة لوح شمسي جديد',
+    sub: 'البيانات دي هتتضاف كصف جديد في الجدول من غير ما تلمس أي صف موجود.',
+    datalist: `<datalist id="gmPanelBrands">${existingBrands.map(b => `<option value="${b}">`).join('')}</datalist>`,
+    fields: [
+      { id:'npBrand', label:'الماركة *', type:'text', list:'gmPanelBrands', placeholder:'مثال: JA' },
+      { id:'npPower', label:'القدرة (واط) *', type:'number', step:1, placeholder:'مثال: 620' },
+      { id:'npVimp', label:'Vimp (V) *', type:'number', step:0.01 },
+      { id:'npVoc', label:'Voc (V) *', type:'number', step:0.01 },
+      { id:'npIimp', label:'I imp (A)', type:'number', step:0.01 },
+      { id:'npIsc', label:'I sc (A)', type:'number', step:0.01 },
+      { id:'npPrice', label:'السعر (جنيه/واط) - اختياري', type:'number', step:0.01 },
+    ],
+    onConfirm: () => {
+      const brand = gmVal('npBrand'), power = gmNum('npPower'), vimp = gmNum('npVimp'), voc = gmNum('npVoc');
+      if (!brand || !power || !vimp || !voc) { toast('من فضلك أكمل الماركة والقدرة و Vimp و Voc على الأقل', 'err'); return; }
+      const iimp = gmNum('npIimp') || 0;
+      const isc = gmNum('npIsc') || 0;
+      const priceVal = gmVal('npPrice');
+      DATA.panels.push({ brand, power, vimp, voc, iimp, isc, price: priceVal === '' ? null : Number(priceVal) });
+      document.getElementById('panelsFilter').value = 'all';
+      closeModal();
+      renderAdminForms();
+      toast('تمت إضافة اللوح - متنساش تحفظ التعديلات', 'ok');
+    }
+  });
+});
+
+/* ---- إضافة موديل انفرتر (الماركة من قائمة ثابتة عشان تتطابق دايمًا مع جدول الخصومات) ---- */
 document.getElementById('addInvBtn').addEventListener('click', () => {
-  const brand = document.getElementById('invBrandFilter').value || Object.keys(DATA.inverter.discounts)[0];
-  DATA.inverter.models.push({ brand, hp: 10, kw: 7.5, listPrice: 15000 });
-  renderAdminForms();
+  const brands = Object.keys(DATA.inverter.discounts);
+  const preselect = document.getElementById('invBrandFilter').value || brands[0];
+  openModal({
+    title: 'إضافة موديل انفرتر جديد',
+    sub: 'الماركة بتتاخد من قائمة ثابتة عشان تتطابق تمامًا مع جدول الخصومات (من غير فروق كتابة زي Capital/Small).',
+    fields: [
+      { id:'niBrand', label:'الماركة *', type:'select', options: brands, selected: preselect },
+      { id:'niHp', label:'HP *', type:'number', step:0.1 },
+      { id:'niKw', label:'KW *', type:'number', step:0.1 },
+      { id:'niPrice', label:'السعر (Price List) *', type:'number', step:1 },
+    ],
+    onConfirm: () => {
+      const brand = gmVal('niBrand'), hp = gmNum('niHp'), kw = gmNum('niKw'), listPrice = gmNum('niPrice');
+      if (!hp || !kw || !listPrice) { toast('من فضلك أكمل HP و KW والسعر', 'err'); return; }
+      DATA.inverter.models.push({ brand, hp, kw, listPrice });
+      document.getElementById('invBrandFilter').value = brand;
+      closeModal();
+      renderAdminForms();
+      toast('تمت إضافة الموديل - متنساش تحفظ التعديلات', 'ok');
+    }
+  });
 });
+
+/* ---- إضافة نوع كابل (شركة/مقاس/سعر) ---- */
 document.getElementById('addCableBtn').addEventListener('click', () => {
-  if (!DATA.cables.catalog) DATA.cables.catalog = [];
-  DATA.cables.catalog.push({ brand: 'شركة جديدة', size: '4mm²', pricePerMeter: 0 });
-  renderAdminForms();
+  const existingBrands = [...new Set((DATA.cables.catalog || []).map(c => c.brand))].sort((a,b) => a.localeCompare(b,'ar'));
+  openModal({
+    title: 'إضافة نوع كابل جديد',
+    sub: 'ده جدول مرجعي (شركة/مقاس/سعر) - مبيغيرش السعر الفعلي في الحسبة إلا لو حدّثت "إعدادات التسعير" تحت يدويًا.',
+    datalist: `<datalist id="gmCableBrands">${existingBrands.map(b => `<option value="${b}">`).join('')}</datalist>`,
+    fields: [
+      { id:'nclBrand', label:'الشركة المصنعة *', type:'text', list:'gmCableBrands' },
+      { id:'nclSize', label:'المقاس *', type:'text', placeholder:'مثال: 4mm²' },
+      { id:'nclPrice', label:'سعر المتر *', type:'number', step:0.01 },
+    ],
+    onConfirm: () => {
+      const brand = gmVal('nclBrand'), size = gmVal('nclSize'), pricePerMeter = gmNum('nclPrice');
+      if (!brand || !size || !pricePerMeter) { toast('من فضلك أكمل كل الحقول', 'err'); return; }
+      if (!DATA.cables.catalog) DATA.cables.catalog = [];
+      DATA.cables.catalog.push({ brand, size, pricePerMeter });
+      closeModal();
+      renderAdminForms();
+      toast('تمت الإضافة - متنساش تحفظ التعديلات', 'ok');
+    }
+  });
 });
+
+/* ---- إضافة صف صندوق تجميع ---- */
 document.getElementById('addCombinerBtn').addEventListener('click', () => {
-  DATA.combinerBox.table.push({ arrays: 4, mccb: 80, listPrice: 6350 });
-  renderAdminForms();
+  openModal({
+    title: 'إضافة صف صندوق تجميع',
+    fields: [
+      { id:'ncbArrays', label:'عدد المصفوفات (Arrays) *', type:'number', step:1 },
+      { id:'ncbMccb', label:'MCCB (أمبير) *', type:'number', step:1 },
+      { id:'ncbPrice', label:'السعر الأصلي *', type:'number', step:1 },
+    ],
+    onConfirm: () => {
+      const arrays = gmNum('ncbArrays'), mccb = gmNum('ncbMccb'), listPrice = gmNum('ncbPrice');
+      if (!arrays || !mccb || !listPrice) { toast('من فضلك أكمل كل الحقول', 'err'); return; }
+      DATA.combinerBox.table.push({ arrays, mccb, listPrice });
+      closeModal();
+      renderAdminForms();
+      toast('تمت الإضافة - متنساش تحفظ التعديلات', 'ok');
+    }
+  });
 });
+
+/* ---- إضافة صف ريأكتور ---- */
 document.getElementById('addReactorBtn').addEventListener('click', () => {
-  DATA.reactor.table.push({ amp: 50, price: 6500 });
-  renderAdminForms();
+  openModal({
+    title: 'إضافة صف ريأكتور',
+    fields: [
+      { id:'nrAmp', label:'أمبير *', type:'number', step:1 },
+      { id:'nrPrice', label:'السعر *', type:'number', step:1 },
+    ],
+    onConfirm: () => {
+      const amp = gmNum('nrAmp'), price = gmNum('nrPrice');
+      if (!amp || !price) { toast('من فضلك أكمل كل الحقول', 'err'); return; }
+      DATA.reactor.table.push({ amp, price });
+      closeModal();
+      renderAdminForms();
+      toast('تمت الإضافة - متنساش تحفظ التعديلات', 'ok');
+    }
+  });
 });
+
+/* ---- إضافة قاطع MCB/MCCB ---- */
 document.getElementById('addMcbBtn').addEventListener('click', () => {
-  DATA.mcb.push({ amp: 32, price: 300 });
-  renderAdminForms();
+  openModal({
+    title: 'إضافة قاطع MCB/MCCB',
+    fields: [
+      { id:'nmAmp', label:'أمبير *', type:'number', step:1 },
+      { id:'nmPrice', label:'السعر *', type:'number', step:1 },
+    ],
+    onConfirm: () => {
+      const amp = gmNum('nmAmp'), price = gmNum('nmPrice');
+      if (!amp || !price) { toast('من فضلك أكمل كل الحقول', 'err'); return; }
+      DATA.mcb.push({ amp, price });
+      closeModal();
+      renderAdminForms();
+      toast('تمت الإضافة - متنساش تحفظ التعديلات', 'ok');
+    }
+  });
 });
 
 function collectConstantsIntoData() {

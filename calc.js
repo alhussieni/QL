@@ -16,8 +16,20 @@ function findPanel(data, brand, power) {
   return data.panels.find(p => p.brand === brand && Number(p.power) === Number(power));
 }
 
+function sameBrand(a, b) {
+  return String(a).trim().toLowerCase() === String(b).trim().toLowerCase();
+}
+
 function findInverterModel(data, brand, hp, kw) {
-  return data.inverter.models.find(m => m.brand === brand && Number(m.hp) === Number(hp) && Number(m.kw) === Number(kw));
+  return data.inverter.models.find(m => sameBrand(m.brand, brand) && Number(m.hp) === Number(hp) && Number(m.kw) === Number(kw));
+}
+
+function getInverterDiscount(data, brand) {
+  // مطابقة بدون حساسية لحالة الأحرف (Capital/Small) - أي فرق كتابة في
+  // نفس الماركة (زي Delixi / delixi) متسببش فقدان الخصم أو الموديل
+  if (data.inverter.discounts[brand] !== undefined) return data.inverter.discounts[brand];
+  const key = Object.keys(data.inverter.discounts).find(k => sameBrand(k, brand));
+  return key ? data.inverter.discounts[key] : 0;
 }
 
 function findCombinerRow(data, arrayCount) {
@@ -127,7 +139,7 @@ function computeOffer(data, inputs) {
 
   // 3) الانفرتر
   const invModel = findInverterModel(data, inputs.inverterBrand, H14.hp, H14.kw);
-  const invDiscount = data.inverter.discounts[inputs.inverterBrand] || 0;
+  const invDiscount = getInverterDiscount(data, inputs.inverterBrand);
   let invListPrice = 0, invCostPrice = 0;
   if (invModel) {
     invListPrice = invModel.listPrice;
