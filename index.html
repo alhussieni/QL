@@ -295,6 +295,7 @@
           <div class="field">
             <label>الحد الأقصى لفولت السلسلة (V) <span class="hint">Voltage Limit Cap</span></label>
             <input type="number" id="cfgVoltageLimitCap" step="1">
+            <small style="display:block; margin-top:5px; font-size:11px; color:var(--ink-faint);">⚠ بيتقارن بـ <b>Vimp</b> (فولت التشغيل الأمثل) مش <b>Voc</b> (فولت الدائرة المفتوحة) — المعادلة: عدد الألواح بالسلسلة = هذا الرقم ÷ Vimp اللوح.</small>
           </div>
           <div class="field">
             <label>معامل الفولت المتوقع (VAC Factor)</label>
@@ -306,6 +307,14 @@
       <div class="card">
         <h2><span class="num">☀</span> جدول الألواح الشمسية</h2>
         <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">لازم كل لوح له سعر (جنيه/واط) عشان يظهر في اختيارات الحاسبة.</p>
+        <div class="field" style="max-width:260px;">
+          <label>عرض</label>
+          <select id="panelsFilter">
+            <option value="all">كل الألواح</option>
+            <option value="priced">الألواح اللي ليها سعر بس</option>
+            <option value="unpriced">الألواح اللي من غير سعر بس</option>
+          </select>
+        </div>
         <p id="panelsMissingNote" style="font-size:12px; color:var(--sun); margin:0 0 10px; font-family:var(--mono);"></p>
         <div class="tbl-wrap">
           <table class="tbl-edit" id="panelsTable">
@@ -318,7 +327,11 @@
 
       <div class="card">
         <h2><span class="num">⚙</span> جدول الإنفرترات</h2>
-        <div class="row2" id="invDiscountsBox" style="margin-bottom:10px;"></div>
+        <div class="compact-grid" id="invDiscountsBox" style="margin-bottom:14px;"></div>
+        <div class="field" style="max-width:260px;">
+          <label>اختر ماركة الانفرتر لعرض/تعديل موديلاتها</label>
+          <select id="invBrandFilter"></select>
+        </div>
         <div class="tbl-wrap">
           <table class="tbl-edit" id="invTable">
             <thead><tr><th>الماركة</th><th>HP</th><th>KW</th><th>السعر (Price List)</th><th></th></tr></thead>
@@ -384,12 +397,29 @@
       </div>
 
       <div class="card">
-        <h2><span class="num">≡</span> ثوابت أخرى (كابلات / تأريض / تركيب / نقل)</h2>
-        <div class="row3">
-          <div class="field"><label>متر كابل/صف</label><input type="number" id="cfgCableMeterPerArray"></div>
-          <div class="field"><label>سعر متر الكابل</label><input type="number" id="cfgCablePricePerMeter"></div>
-          <div class="field"><label>معامل ربح الكابلات</label><input type="number" id="cfgCableMarkup" step="0.01"></div>
+        <h2><span class="num">⎓</span> الكابلات - الشركات والمقاسات</h2>
+        <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">جدول مرجعي بأسعار كل شركة ومقاس عند الموردين، وتحته الإعدادات الفعلية اللي بتدخل في حساب عرض السعر.</p>
+        <div class="tbl-wrap">
+          <table class="tbl-edit" id="cablesTable">
+            <thead><tr><th>الشركة المصنعة</th><th>المقاس</th><th>سعر المتر</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
         </div>
+        <button class="btn ghost small" id="addCableBtn" style="margin-top:10px;">+ إضافة نوع كابل</button>
+
+        <div style="margin-top:18px; padding-top:16px; border-top:1px dashed var(--line);">
+          <b style="font-size:12.5px; color:var(--ink-dim);">⚡ إعدادات التسعير المستخدمة في الحسبة</b>
+          <p style="font-size:11.5px; color:var(--ink-faint); margin:4px 0 12px;">دي القيم الفعلية اللي بتدخل في حساب السعر النهائي - عدّلها يدويًا لو غيّرت السعر في الجدول فوق وعايز تطبّقه.</p>
+          <div class="row3">
+            <div class="field"><label>متر كابل/صف</label><input type="number" id="cfgCableMeterPerArray"></div>
+            <div class="field"><label>سعر متر الكابل المستخدم</label><input type="number" id="cfgCablePricePerMeter"></div>
+            <div class="field"><label>معامل ربح الكابلات</label><input type="number" id="cfgCableMarkup" step="0.01"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">≡</span> ثوابت أخرى (تأريض / تركيب / نقل)</h2>
         <div class="row3">
           <div class="field"><label>MC4 لكل صف</label><input type="number" id="cfgMc4PerArray"></div>
           <div class="field"><label>سعر MC4</label><input type="number" id="cfgMc4Price"></div>
@@ -423,6 +453,31 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- ======================= MODAL: إضافة لوح جديد ======================= -->
+<div class="modal-overlay" id="addPanelModal">
+  <div class="modal-box">
+    <h3>إضافة لوح شمسي جديد</h3>
+    <p class="modal-sub">البيانات دي هتتضاف كصف جديد في الجدول من غير ما تلمس أي صف موجود.</p>
+    <div class="row2">
+      <div class="field"><label>الماركة *</label><input type="text" id="npBrand" placeholder="مثال: JA"></div>
+      <div class="field"><label>القدرة (واط) *</label><input type="number" id="npPower" step="1" placeholder="مثال: 620"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Vimp (V) *</label><input type="number" id="npVimp" step="0.01"></div>
+      <div class="field"><label>Voc (V) *</label><input type="number" id="npVoc" step="0.01"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>I imp (A)</label><input type="number" id="npIimp" step="0.01"></div>
+      <div class="field"><label>I sc (A)</label><input type="number" id="npIsc" step="0.01"></div>
+    </div>
+    <div class="field"><label>السعر (جنيه/واط) <span class="hint">اختياري - سيبه فاضي لو لسه مش معروف</span></label><input type="number" id="npPrice" step="0.01"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="addPanelCancelBtn">إلغاء</button>
+      <button class="btn" id="addPanelConfirmBtn">إضافة اللوح</button>
+    </div>
+  </div>
+</div>
 
 <!-- ======================= PRINT-ONLY QUOTE TEMPLATE ======================= -->
 <div id="printQuote">

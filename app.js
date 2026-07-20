@@ -404,16 +404,14 @@ function renderAdminForms() {
   document.getElementById('cfgVoltageLimitCap').value = DATA.voltageLimitCap;
   document.getElementById('cfgExpectedVACFactor').value = DATA.expectedVACFactor;
 
-  // panels table - رتب الألواح الناقصة سعر أولاً عشان يسهل الوصول ليها وتعبئتها
+  // panels table - ترتيب أبجدي بالماركة، مع فلتر لعرض (الكل / له سعر / بدون سعر)
   const panelsBody = document.querySelector('#panelsTable tbody');
   panelsBody.innerHTML = '';
-  const panelIndexPairs = DATA.panels.map((p, i) => [p, i]);
-  panelIndexPairs.sort((a, b) => {
-    const aMissing = !a[0].price ? 0 : 1;
-    const bMissing = !b[0].price ? 0 : 1;
-    if (aMissing !== bMissing) return aMissing - bMissing;
-    return String(a[0].brand).localeCompare(String(b[0].brand));
-  });
+  const filterMode = document.getElementById('panelsFilter').value;
+  const panelIndexPairs = DATA.panels
+    .map((p, i) => [p, i])
+    .filter(([p]) => filterMode === 'all' ? true : filterMode === 'priced' ? !!p.price : !p.price)
+    .sort((a, b) => String(a[0].brand).localeCompare(String(b[0].brand), 'ar') || (a[0].power - b[0].power));
   const missingCount = DATA.panels.filter(p => !p.price).length;
   document.getElementById('panelsMissingNote').textContent =
     missingCount > 0
@@ -432,7 +430,17 @@ function renderAdminForms() {
 
   const invBody = document.querySelector('#invTable tbody');
   invBody.innerHTML = '';
-  DATA.inverter.models.forEach((m, i) => invBody.appendChild(invRow(m, i)));
+  const invBrandSelect = document.getElementById('invBrandFilter');
+  const prevInvBrand = invBrandSelect.value;
+  const modelBrands = [...new Set(DATA.inverter.models.map(m => m.brand))];
+  const allInvBrands = [...new Set([...discBrands, ...modelBrands])].sort((a, b) => a.localeCompare(b, 'ar'));
+  invBrandSelect.innerHTML = allInvBrands.map(b => `<option value="${b}">${b}</option>`).join('');
+  invBrandSelect.value = allInvBrands.includes(prevInvBrand) ? prevInvBrand : allInvBrands[0];
+  const selectedInvBrand = invBrandSelect.value;
+  DATA.inverter.models
+    .map((m, i) => [m, i])
+    .filter(([m]) => m.brand === selectedInvBrand)
+    .forEach(([m, i]) => invBody.appendChild(invRow(m, i)));
 
   // combiner box
   document.getElementById('cfgCombinerDiscount').value = DATA.combinerBox.discount;
@@ -457,6 +465,12 @@ function renderAdminForms() {
   document.getElementById('cfgSteelSemcoGt15').value = DATA.steel.rotational.semco.gt15Panels;
   document.getElementById('cfgSteelElmo15').value = DATA.steel.rotational.elmotaheda.le15Panels;
   document.getElementById('cfgSteelElmoGt15').value = DATA.steel.rotational.elmotaheda.gt15Panels;
+
+  // cables catalog (الشركات والمقاسات)
+  if (!DATA.cables.catalog) DATA.cables.catalog = [];
+  const cablesBody = document.querySelector('#cablesTable tbody');
+  cablesBody.innerHTML = '';
+  DATA.cables.catalog.forEach((c, i) => cablesBody.appendChild(cableRow(c, i)));
 
   // other constants
   document.getElementById('cfgCableMeterPerArray').value = DATA.cables.meterPerArray;
@@ -506,6 +520,19 @@ function invRow(m, i) {
   return tr;
 }
 
+function cableRow(c, i) {
+  const tr = document.createElement('tr');
+  const fields = ['brand','size','pricePerMeter'];
+  tr.innerHTML = fields.map(f => `<td><input type="${f==='pricePerMeter'?'number':'text'}" value="${c[f] ?? ''}" data-cable="${i}" data-field="${f}"></td>`).join('') +
+    `<td><button class="rm" data-rm-cable="${i}">×</button></td>`;
+  tr.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
+    const val = inp.dataset.field === 'pricePerMeter' ? Number(inp.value) : inp.value;
+    DATA.cables.catalog[i][inp.dataset.field] = val;
+  }));
+  tr.querySelector('[data-rm-cable]').addEventListener('click', () => { DATA.cables.catalog.splice(i,1); renderAdminForms(); });
+  return tr;
+}
+
 function combinerRow(c, i) {
   const tr = document.createElement('tr');
   const fields = ['arrays','mccb','listPrice'];
@@ -530,12 +557,49 @@ function simpleRow(obj, i, f1, f2, arr) {
   return tr;
 }
 
-document.getElementById('addPanelBtn').addEventListener('click', () => {
-  DATA.panels.push({ brand: 'ماركة جديدة', power: 600, vimp: 40, voc: 48, iimp: 15, isc: 16, price: 8 });
+document.getElementById('invBrandFilter').addEventListener('change', renderAdminForms);
+document.getElementById('panelsFilter').addEventListener('change', renderAdminForms);
+function openAddPanelModal() {
+  ['npBrand','npPower','npVimp','npVoc','npIimp','npIsc','npPrice'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('addPanelModal').classList.add('show');
+  document.getElementById('npBrand').focus();
+}
+function closeAddPanelModal() {
+  document.getElementById('addPanelModal').classList.remove('show');
+}
+document.getElementById('addPanelBtn').addEventListener('click', openAddPanelModal);
+document.getElementById('addPanelCancelBtn').addEventListener('click', closeAddPanelModal);
+document.getElementById('addPanelModal').addEventListener('click', (e) => {
+  if (e.target.id === 'addPanelModal') closeAddPanelModal();
+});
+document.getElementById('addPanelConfirmBtn').addEventListener('click', () => {
+  const brand = document.getElementById('npBrand').value.trim();
+  const power = Number(document.getElementById('npPower').value);
+  const vimp = Number(document.getElementById('npVimp').value);
+  const voc = Number(document.getElementById('npVoc').value);
+  if (!brand || !power || !vimp || !voc) {
+    toast('من فضلك أكمل الماركة والقدرة و Vimp و Voc على الأقل', 'err');
+    return;
+  }
+  const iimp = Number(document.getElementById('npIimp').value) || 0;
+  const isc = Number(document.getElementById('npIsc').value) || 0;
+  const priceVal = document.getElementById('npPrice').value.trim();
+  const price = priceVal === '' ? null : Number(priceVal);
+
+  DATA.panels.push({ brand, power, vimp, voc, iimp, isc, price });
+  closeAddPanelModal();
+  document.getElementById('panelsFilter').value = 'all';
   renderAdminForms();
+  toast('تمت إضافة اللوح - متنساش تحفظ التعديلات', 'ok');
 });
 document.getElementById('addInvBtn').addEventListener('click', () => {
-  DATA.inverter.models.push({ brand: Object.keys(DATA.inverter.discounts)[0], hp: 10, kw: 7.5, listPrice: 15000 });
+  const brand = document.getElementById('invBrandFilter').value || Object.keys(DATA.inverter.discounts)[0];
+  DATA.inverter.models.push({ brand, hp: 10, kw: 7.5, listPrice: 15000 });
+  renderAdminForms();
+});
+document.getElementById('addCableBtn').addEventListener('click', () => {
+  if (!DATA.cables.catalog) DATA.cables.catalog = [];
+  DATA.cables.catalog.push({ brand: 'شركة جديدة', size: '4mm²', pricePerMeter: 0 });
   renderAdminForms();
 });
 document.getElementById('addCombinerBtn').addEventListener('click', () => {

@@ -1482,7 +1482,24 @@
     "mc4PerArray": 2,
     "mc4Price": 48,
     "flexTubeDivisor": 40,
-    "flexTubePrice": 200
+    "flexTubePrice": 200,
+    "catalog": [
+      {
+        "brand": "HIS",
+        "size": "4mm² DC Solar Cable",
+        "pricePerMeter": 57
+      },
+      {
+        "brand": "LEADER",
+        "size": "4mm² DC Solar Cable",
+        "pricePerMeter": 55
+      },
+      {
+        "brand": "KBE",
+        "size": "6mm² DC Solar Cable",
+        "pricePerMeter": 68
+      }
+    ]
   },
   "earthing": {
     "divisor": 40000,
