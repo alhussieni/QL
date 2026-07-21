@@ -1,0 +1,96 @@
+{
+  "quotes": [
+    {
+      "id": "QL-21Jul2026-P-200 HP-VEICHI 225 HP - 160 KW-JA620-FIXED-Client",
+      "savedAt": "2026-07-21T09:43:58.420Z",
+      "clientName": "غير محدد",
+      "clientPhone": "",
+      "motorHP": 200,
+      "structureType": "FIXED",
+      "panelBrand": "JA",
+      "panelPower": "620",
+      "panelCount": 324,
+      "designedKW": 200.88,
+      "inverterBrand": "VEICHI",
+      "inverterModel": "225 HP - 160 KW",
+      "finalPrice": 2359020,
+      "beforeDiscount": 2423676,
+      "pricePerKW": 11743.428912783751,
+      "offerRows": [
+        {
+          "n": 1,
+          "name": "الواح الطاقة الشمسية",
+          "type": "JA 620W",
+          "qty": "324 لوح (18 × 18)",
+          "origin": "الصين",
+          "warranty": "30 سنة ضد انخفاض الإنتاجية عن 87.40% / 12 سنة ضد عيوب الصناعة"
+        },
+        {
+          "n": 2,
+          "name": "الشاسية",
+          "type": "ثابت مجلفن تثبيت مسامير",
+          "qty": "200.9 KW",
+          "origin": "مصر",
+          "warranty": "خمس سنوات"
+        },
+        {
+          "n": 3,
+          "name": "الانفرتر",
+          "type": "VEICHI 225 HP - 160 KW",
+          "qty": "1",
+          "origin": "الصين",
+          "warranty": "سنتان"
+        },
+        {
+          "n": 4,
+          "name": "الكابلات",
+          "type": "HIS / LEADER / KBE",
+          "qty": "يحدد في الموقع - بحد أقصى 1260 متر",
+          "origin": "ألمانيا / الصين",
+          "warranty": "سنة واحدة"
+        },
+        {
+          "n": 5,
+          "name": "التأريض / بئر أرضي",
+          "type": "-",
+          "qty": "لا يوجد",
+          "origin": "مصر",
+          "warranty": "----"
+        },
+        {
+          "n": 6,
+          "name": "الريأكتور (VFD Reactor)",
+          "type": "300 A",
+          "qty": "لا يوجد",
+          "origin": "مصر",
+          "warranty": "سنة واحدة"
+        },
+        {
+          "n": 7,
+          "name": "التوريد والنقل والتركيب وعمالة ولوحة الحماية IP65 والاكسسوارات والمواسير",
+          "type": "-",
+          "qty": "201 KW",
+          "origin": "مصر / الصين",
+          "warranty": "----"
+        }
+      ],
+      "paymentTerms": [
+        {
+          "label": "مقدم عند التعاقد",
+          "pct": 0.7,
+          "amount": 1651314
+        },
+        {
+          "label": "عند التوريد",
+          "pct": 0.25,
+          "amount": 589755
+        },
+        {
+          "label": "عند التشغيل",
+          "pct": 0.05,
+          "amount": 117951
+        }
+      ]
+    }
+  ]
+}
