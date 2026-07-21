@@ -208,6 +208,7 @@
         </div>
 
         <button class="btn ghost" id="printBtn" style="margin-top:6px;">🖨 طباعة / حفظ PDF</button>
+        <p style="font-size:11px; color:var(--ink-faint); text-align:center; margin:8px 0 0;">لازم تكون مسجل دخول كأدمن عشان تقدر تطبع/تحفظ العرض - كده بيتسجل في السجل المركزي المتاح من أي جهاز.</p>
       </div>
     </div>
   </section>
@@ -267,6 +268,23 @@
           <button class="btn ghost small" id="downloadJsonBtn">تنزيل data.json</button>
           <button class="btn small" id="saveGithubBtn">حفظ التعديلات على GitHub</button>
           <button class="btn ghost small" id="lockAdminBtn">خروج</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">📇</span> سجل عروض الأسعار</h2>
+        <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">كل عرض بتضغط عليه "طباعة/حفظ" بيتسجل هنا تلقائيًا - اسم العميل ورقم هاتفه وتفاصيل العرض كاملة، عشان ترجعله وقت ما احتجت.</p>
+        <div style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
+          <input type="text" id="quotesSearch" placeholder="دور بالاسم أو رقم الهاتف..." style="flex:1; min-width:180px;">
+          <button class="btn ghost small" id="refreshQuotesBtn">تحديث من GitHub ↻</button>
+        </div>
+        <div style="margin-bottom:10px;">
+          <b style="font-size:12.5px; color:var(--ink-dim);">السجل المركزي (GitHub - يظهر من أي جهاز)</b>
+          <div id="quotesLogRemote" style="margin-top:8px;"></div>
+        </div>
+        <div>
+          <b style="font-size:12.5px; color:var(--ink-dim);">السجل المحلي (على هذا الجهاز/المتصفح بس)</b>
+          <div id="quotesLogLocal" style="margin-top:8px;"></div>
         </div>
       </div>
 

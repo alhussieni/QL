@@ -15,13 +15,12 @@ function toast(msg, type) {
 }
 
 /* ---------------------------- navigation ---------------------------- */
+function goToView(name) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === name));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + name));
+}
 document.querySelectorAll('.nav-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById('view-' + btn.dataset.view).classList.add('active');
-  });
+  btn.addEventListener('click', () => goToView(btn.dataset.view));
 });
 
 /* ---------------------------- load data ---------------------------- */
@@ -241,6 +240,11 @@ loadData().catch(err => {
 function preparePrintAndPrint() {
   const r = LAST_RESULT;
   if (!r || !r.totals) { toast('من فضلك أكمل بيانات الحسبة أولًا', 'err'); return; }
+  if (!isAdmin || !GH.token) {
+    toast('لازم تسجل دخول كأدمن *متصل بـ GitHub* (مش وضع بدون اتصال) عشان العرض يتسجل في السجل المركزي', 'err');
+    goToView('admin');
+    return;
+  }
   const sym = DATA.meta.currencySymbol;
   const inputs = readInputs();
 
@@ -278,6 +282,8 @@ function preparePrintAndPrint() {
     <div class="row"><span>${t.label} (${Math.round(t.pct*100)}%)</span><span>${fmt(t.amount)} ${sym}</span></div>
   `).join('');
 
+  logQuoteRecord(r, inputs, quoteFilename);
+
   const prevTitle = document.title;
   document.title = quoteFilename;
   window.print();
@@ -294,6 +300,189 @@ function preparePrintAndPrint() {
 const GH = {
   owner: '', repo: '', branch: 'main', token: '', sha: null
 };
+
+async function ghGetFileRaw(path) {
+  return fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}?ref=${GH.branch}`, {
+    headers: { Authorization: `token ${GH.token}`, Accept: 'application/vnd.github+json' }
+  });
+}
+
+async function ghPutFileRaw(path, dataObj, sha, message) {
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(dataObj, null, 2))));
+  const body = { message, content, branch: GH.branch };
+  if (sha) body.sha = sha;
+  const res = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}`, {
+    method: 'PUT',
+    headers: { Authorization: `token ${GH.token}`, Accept: 'application/vnd.github+json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || 'فشل الحفظ على GitHub');
+  }
+  return res.json();
+}
+
+/* ---------------------------------------------------------------------
+   سجل عروض الأسعار: كل عرض بيتحفظ نسخة منه محليًا في المتصفح دايمًا
+   (احتياطي فوري، شغال من غير أي تسجيل دخول)، وكمان بيتزامن مع ملف
+   quotes.json المشترك على GitHub لو الجلسة الحالية أدمن ومتصلة، عشان
+   يبقى متاح من أي جهاز.
+   --------------------------------------------------------------------- */
+function buildQuoteRecord(r, inputs, quoteFilename) {
+  return {
+    id: quoteFilename,
+    savedAt: new Date().toISOString(),
+    clientName: document.getElementById('clientName').value.trim() || 'غير محدد',
+    clientPhone: document.getElementById('clientPhone').value.trim() || '',
+    motorHP: r.H13,
+    structureType: inputs.structureType,
+    panelBrand: inputs.panelBrand,
+    panelPower: inputs.panelPower,
+    panelCount: r.H7,
+    designedKW: Number(r.H8.toFixed(2)),
+    inverterBrand: inputs.inverterBrand,
+    inverterModel: r.H14.text,
+    finalPrice: r.totals.finalPrice,
+    beforeDiscount: r.totals.beforeDiscount,
+    pricePerKW: r.totals.pricePerKW,
+    offerRows: r.offer.rows.map(row => ({ n: row.n, name: row.name, type: row.type, qty: row.qty, origin: row.origin, warranty: row.warranty })),
+    paymentTerms: r.paymentTerms.map(t => ({ label: t.label, pct: t.pct, amount: t.amount }))
+  };
+}
+
+function saveQuoteLocally(record) {
+  try {
+    const log = JSON.parse(localStorage.getItem('quotesLog') || '[]');
+    log.unshift(record);
+    localStorage.setItem('quotesLog', JSON.stringify(log.slice(0, 500)));
+  } catch (e) { console.error('local quote log failed', e); }
+}
+
+async function syncQuoteToGithub(record) {
+  const res = await ghGetFileRaw('quotes.json');
+  let quotesData = { quotes: [] };
+  let sha = null;
+  if (res.ok) {
+    const json = await res.json();
+    sha = json.sha;
+    quotesData = JSON.parse(decodeURIComponent(escape(atob(json.content))));
+    if (!Array.isArray(quotesData.quotes)) quotesData.quotes = [];
+  }
+  quotesData.quotes.unshift(record);
+  await ghPutFileRaw('quotes.json', quotesData, sha, `عرض سعر جديد: ${record.id}`);
+}
+
+function logQuoteRecord(r, inputs, quoteFilename) {
+  const record = buildQuoteRecord(r, inputs, quoteFilename);
+  saveQuoteLocally(record);
+  if (isAdmin && GH.token) {
+    syncQuoteToGithub(record).catch(e => {
+      console.error('quote github sync failed', e);
+      toast('العرض اتحفظ محليًا، لكن حصل خطأ في مزامنته على GitHub', 'err');
+    });
+  }
+}
+
+function waLink(phone) {
+  let digits = String(phone || '').replace(/\D/g, '');
+  if (!digits) return null;
+  if (digits.startsWith('0')) digits = '2' + digits;           // مصر: 0xxxxxxxxxx → 20xxxxxxxxxx
+  else if (!digits.startsWith('20') && digits.length <= 11) digits = '20' + digits;
+  return `https://wa.me/${digits}`;
+}
+
+function quoteRecordHtml(rec) {
+  const sym = DATA.meta.currencySymbol;
+  const wa = waLink(rec.clientPhone);
+  const offerRowsHtml = (rec.offerRows || []).map(row => `
+    <tr><td>${row.n}</td><td>${row.name}</td><td>${row.type || '-'}</td><td>${row.qty ?? '-'}</td></tr>
+  `).join('');
+  const paymentHtml = (rec.paymentTerms || []).map(t => `
+    <div class="line"><span>${t.label} (${Math.round(t.pct*100)}%)</span><span>${fmt(t.amount)} ${sym}</span></div>
+  `).join('');
+  return `
+    <div class="qlog-item" data-search="${(rec.clientName+' '+rec.clientPhone).toLowerCase()}">
+      <div class="qlog-head">
+        <div><b>${rec.clientName}</b><span class="qlog-phone">${rec.clientPhone || 'بدون رقم'}</span></div>
+        <div class="qlog-meta">
+          <span>${new Date(rec.savedAt).toLocaleDateString('ar-EG')}</span>
+          <span class="qlog-price">${fmt(rec.finalPrice)} ${sym}</span>
+        </div>
+      </div>
+      <div class="qlog-body">
+        <div class="qlog-actions">
+          ${rec.clientPhone ? `<a class="call" href="tel:${rec.clientPhone}">📞 اتصال</a>` : ''}
+          ${wa ? `<a class="wa" href="${wa}" target="_blank" rel="noopener">💬 واتساب</a>` : ''}
+        </div>
+        <div class="qlog-grid">
+          <div class="cell"><div class="k">رقم العرض</div><div class="v" style="font-family:var(--mono); font-size:10.5px;">${rec.id}</div></div>
+          <div class="cell"><div class="k">قدرة الموتور</div><div class="v">${rec.motorHP} HP</div></div>
+          <div class="cell"><div class="k">نوع الشاسية</div><div class="v">${rec.structureType}</div></div>
+          <div class="cell"><div class="k">اللوح</div><div class="v">${rec.panelBrand} ${rec.panelPower}W × ${rec.panelCount}</div></div>
+          <div class="cell"><div class="k">القدرة المصممة</div><div class="v">${rec.designedKW} KW</div></div>
+          <div class="cell"><div class="k">الانفرتر</div><div class="v">${rec.inverterBrand} ${rec.inverterModel}</div></div>
+          <div class="cell"><div class="k">السعر قبل الخصم</div><div class="v">${fmt(rec.beforeDiscount)} ${sym}</div></div>
+          <div class="cell"><div class="k">السعر/KW</div><div class="v">${fmt(rec.pricePerKW)} ${sym}</div></div>
+        </div>
+        <table class="offer" style="margin-bottom:12px;">
+          <thead><tr><th>#</th><th>البند</th><th>النوع</th><th>الكمية</th></tr></thead>
+          <tbody>${offerRowsHtml}</tbody>
+        </table>
+        <div class="totals">${paymentHtml}</div>
+      </div>
+    </div>`;
+}
+
+function renderQuoteList(container, records, emptyMsg) {
+  if (!records || records.length === 0) {
+    container.innerHTML = `<p class="qlog-empty">${emptyMsg}</p>`;
+    return;
+  }
+  container.innerHTML = records.map(quoteRecordHtml).join('');
+  container.querySelectorAll('.qlog-head').forEach(head => {
+    head.addEventListener('click', () => head.nextElementSibling.classList.toggle('show'));
+  });
+}
+
+let REMOTE_QUOTES = [];
+
+async function renderQuotesLog(tryRemote) {
+  const localLog = JSON.parse(localStorage.getItem('quotesLog') || '[]');
+  renderQuoteList(document.getElementById('quotesLogLocal'), applyQuotesSearch(localLog), 'لسه مفيش عروض متسجلة على الجهاز ده.');
+
+  const remoteBox = document.getElementById('quotesLogRemote');
+  if (!tryRemote || !GH.token) {
+    remoteBox.innerHTML = `<p class="qlog-empty">السجل المركزي بيظهر لما تكون متصل بـ GitHub (مش وضع بدون اتصال).</p>`;
+    return;
+  }
+  remoteBox.innerHTML = `<p class="qlog-empty">جاري التحميل...</p>`;
+  try {
+    const res = await ghGetFileRaw('quotes.json');
+    if (res.ok) {
+      const json = await res.json();
+      const parsed = JSON.parse(decodeURIComponent(escape(atob(json.content))));
+      REMOTE_QUOTES = Array.isArray(parsed.quotes) ? parsed.quotes : [];
+    } else {
+      REMOTE_QUOTES = [];
+    }
+    renderQuoteList(remoteBox, applyQuotesSearch(REMOTE_QUOTES), 'لسه مفيش عروض متسجلة على GitHub.');
+  } catch (e) {
+    remoteBox.innerHTML = `<p class="qlog-empty">تعذر تحميل السجل المركزي.</p>`;
+  }
+}
+
+function applyQuotesSearch(records) {
+  const q = document.getElementById('quotesSearch').value.trim().toLowerCase();
+  if (!q) return records;
+  return records.filter(r => `${r.clientName} ${r.clientPhone}`.toLowerCase().includes(q));
+}
+
+document.getElementById('quotesSearch').addEventListener('input', () => {
+  renderQuoteList(document.getElementById('quotesLogLocal'), applyQuotesSearch(JSON.parse(localStorage.getItem('quotesLog') || '[]')), 'لا يوجد نتائج مطابقة.');
+  renderQuoteList(document.getElementById('quotesLogRemote'), applyQuotesSearch(REMOTE_QUOTES), 'لا يوجد نتائج مطابقة.');
+});
+document.getElementById('refreshQuotesBtn').addEventListener('click', () => renderQuotesLog(true));
 
 async function sha256Hex(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
@@ -386,6 +575,7 @@ function enterAdmin(connected) {
   renderAdminForms();
   isAdmin = true;
   recalc(); // يظهر كارت التكلفة والربح في الحاسبة فورًا
+  renderQuotesLog(connected);
 }
 
 document.getElementById('lockAdminBtn').addEventListener('click', () => {
