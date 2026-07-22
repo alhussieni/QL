@@ -162,53 +162,60 @@
           </div>
         </div>
 
-        <div class="card summary-card">
-          <div class="summary-head">
-            <h2><span class="num">◆</span> ملخص المنظومة</h2>
-            <span class="badge sum-badge" id="summaryBadge"></span>
-          </div>
-          <div class="summary-body">
-            <div class="summary-price">
-              <div class="lbl">الإجمالي النهائي (غير شامل ض.ق.م)</div>
-              <div class="amt" id="finalPriceOut">0 ج.م</div>
-              <div class="sub"><span id="beforeDiscountOut"></span></div>
+        <div class="card" id="priceLockCard" style="text-align:center; padding:var(--sp-4) var(--sp-3);">
+          <div style="font-size:32px; margin-bottom:10px;">🔒</div>
+          <h2 style="border:none; margin:0 0 6px; padding:0; justify-content:center;">أدخل بياناتك عشان تشوف السعر</h2>
+          <p style="font-size:13px; color:var(--ink-dim); max-width:360px; margin:0 auto;">اكتب اسمك ورقم موبايلك في نموذج "بيانات المشروع" جنب كده، وهيظهرلك السعر والتفاصيل كاملة فورًا.</p>
+        </div>
+
+        <div id="priceGate" style="display:none;">
+          <div class="card summary-card">
+            <div class="summary-head">
+              <h2><span class="num">◆</span> ملخص المنظومة</h2>
+              <span class="badge sum-badge" id="summaryBadge"></span>
             </div>
-            <div class="summary-stats">
-              <div class="stat"><div class="v" id="statPricePerKW">-</div><div class="k" id="statPricePerKWLabel">-</div></div>
-              <div class="stat"><div class="v" id="statPanelCount">-</div><div class="k">عدد الألواح</div></div>
-              <div class="stat"><div class="v" id="statKW">-</div><div class="k">KW القدرة الفعلية</div></div>
+            <div class="summary-body">
+              <div class="summary-price">
+                <div class="lbl">الإجمالي النهائي (غير شامل ض.ق.م)</div>
+                <div class="amt" id="finalPriceOut">0 ج.م</div>
+                <div class="sub"><span id="beforeDiscountOut"></span></div>
+              </div>
+              <div class="summary-stats">
+                <div class="stat"><div class="v" id="statPricePerKW">-</div><div class="k" id="statPricePerKWLabel">-</div></div>
+                <div class="stat"><div class="v" id="statPanelCount">-</div><div class="k">عدد الألواح</div></div>
+                <div class="stat"><div class="v" id="statKW">-</div><div class="k">KW القدرة الفعلية</div></div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="card">
-          <h2><span class="num">⚡</span> المواصفات الفنية</h2>
-          <div class="spec-grid" id="specGrid"></div>
-        </div>
-
-        <div class="card">
-          <h2><span class="num">$</span> تفاصيل عرض السعر</h2>
-          <div style="overflow-x:auto;">
-            <table class="offer" id="offerTable">
-              <thead><tr><th>#</th><th>البند</th><th>النوع</th><th>الكمية</th><th>السعر</th></tr></thead>
-              <tbody></tbody>
-            </table>
+          <div class="card">
+            <h2><span class="num">⚡</span> المواصفات الفنية</h2>
+            <div class="spec-grid" id="specGrid"></div>
           </div>
-          <div class="totals" id="totalsBlock"></div>
-        </div>
 
-        <div class="card" id="profitCard" style="display:none; border-color:rgba(45,150,90,.45); background:rgba(45,150,90,.06);">
-          <h2><span class="num">🔐</span> التكلفة والربح <small style="font-size:11px; font-weight:600; color:var(--ink-faint);">(يظهر للأدمن فقط)</small></h2>
-          <div class="totals" id="profitBlock"></div>
-        </div>
+          <div class="card">
+            <h2><span class="num">$</span> تفاصيل عرض السعر</h2>
+            <div style="overflow-x:auto;">
+              <table class="offer" id="offerTable">
+                <thead><tr><th>#</th><th>البند</th><th>النوع</th><th>الكمية</th><th>السعر</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="totals" id="totalsBlock"></div>
+          </div>
 
-        <div class="card">
-          <h2><span class="num">%</span> شروط السداد</h2>
-          <div id="paymentTerms"></div>
-        </div>
+          <div class="card" id="profitCard" style="display:none; border-color:rgba(45,150,90,.45); background:rgba(45,150,90,.06);">
+            <h2><span class="num">🔐</span> التكلفة والربح <small style="font-size:11px; font-weight:600; color:var(--ink-faint);">(يظهر للأدمن فقط)</small></h2>
+            <div class="totals" id="profitBlock"></div>
+          </div>
 
-        <button class="btn ghost" id="printBtn" style="margin-top:6px;">🖨 طباعة / حفظ PDF</button>
-        <p style="font-size:11px; color:var(--ink-faint); text-align:center; margin:8px 0 0;">لازم تكون مسجل دخول كأدمن عشان تقدر تطبع/تحفظ العرض - كده بيتسجل في السجل المركزي المتاح من أي جهاز.</p>
+          <div class="card">
+            <h2><span class="num">%</span> شروط السداد</h2>
+            <div id="paymentTerms"></div>
+          </div>
+
+          <button class="btn ghost" id="printBtn" style="margin-top:6px;">🖨 طباعة / حفظ PDF</button>
+        </div>
       </div>
     </div>
   </section>
@@ -273,17 +280,24 @@
 
       <div class="card">
         <h2><span class="num">📇</span> سجل عروض الأسعار</h2>
-        <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">كل عرض بتضغط عليه "طباعة/حفظ" بيتسجل هنا تلقائيًا - اسم العميل ورقم هاتفه وتفاصيل العرض كاملة، عشان ترجعله وقت ما احتجت.</p>
-        <div style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
+        <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">كل عرض أي حد يعمله (عميل، مندوب، أو أدمن) بيتسجل هنا تلقائيًا - اسم العميل ورقم هاتفه وتفاصيل العرض كاملة، عشان ترجعله وقت ما احتجت.</p>
+
+        <div class="field">
+          <label>رابط سجل عروض الأسعار (Worker URL) <span class="hint">مرة واحدة بس</span></label>
+          <input type="text" id="cfgQuotesWorkerUrl" placeholder="https://alasl-quote-logger.YOUR-SUBDOMAIN.workers.dev">
+          <small style="display:block; margin-top:5px; font-size:11px; color:var(--ink-faint);">شوف ملف <code>server/quote-logger-worker.js</code> في المشروع لخطوات النشر على Cloudflare (مجانًا). من غير الرابط ده، العروض بتتسجل محليًا بس على كل جهاز.</small>
+        </div>
+
+        <div style="display:flex; gap:10px; margin:14px 0; flex-wrap:wrap;">
           <input type="text" id="quotesSearch" placeholder="دور بالاسم أو رقم الهاتف..." style="flex:1; min-width:180px;">
-          <button class="btn ghost small" id="refreshQuotesBtn">تحديث من GitHub ↻</button>
+          <button class="btn ghost small" id="refreshQuotesBtn">تحديث السجل المركزي ↻</button>
         </div>
         <div style="margin-bottom:10px;">
-          <b style="font-size:12.5px; color:var(--ink-dim);">السجل المركزي (GitHub - يظهر من أي جهاز)</b>
+          <b style="font-size:12.5px; color:var(--ink-dim);">السجل المركزي (يظهر من أي جهاز لأي أدمن)</b>
           <div id="quotesLogRemote" style="margin-top:8px;"></div>
         </div>
         <div>
-          <b style="font-size:12.5px; color:var(--ink-dim);">السجل المحلي (على هذا الجهاز/المتصفح بس)</b>
+          <b style="font-size:12.5px; color:var(--ink-dim);">السجل المحلي (على هذا الجهاز/المتصفح بس - نسخة احتياطية)</b>
           <div id="quotesLogLocal" style="margin-top:8px;"></div>
         </div>
       </div>

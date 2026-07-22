@@ -6,6 +6,13 @@ let DATA = null;
 let isAdmin = false;
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 
+function isValidEgyptPhone(raw) {
+  let d = String(raw || '').replace(/\D/g, '');
+  if (d.startsWith('0020') && d.length === 14) d = '0' + d.slice(4);
+  else if (d.startsWith('20') && d.length === 12) d = '0' + d.slice(2);
+  return /^01[0125]\d{8}$/.test(d);
+}
+
 function toast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -37,7 +44,7 @@ async function loadData() {
 }
 
 function uniqueBrands() {
-  return [...new Set(DATA.panels.filter(p => p.price).map(p => p.brand))];
+  return [...new Set(DATA.panels.filter(p => p.price).map(p => p.brand))].sort((a, b) => a.localeCompare(b, 'ar'));
 }
 
 function populateSelectors() {
@@ -48,7 +55,7 @@ function populateSelectors() {
   populatePanelPowers();
 
   const invSel = document.getElementById('inverterBrand');
-  const invBrands = [...new Set(DATA.inverter.models.map(m => m.brand))];
+  const invBrands = [...new Set(DATA.inverter.models.map(m => m.brand))].sort((a, b) => a.localeCompare(b, 'ar'));
   invSel.innerHTML = invBrands.map(b => `<option value="${b}">${b}</option>`).join('');
   invSel.value = invBrands.includes(DATA.defaults.inverterBrand) ? DATA.defaults.inverterBrand : invBrands[0];
 
@@ -66,7 +73,7 @@ function populateSelectors() {
 
 function populatePanelPowers() {
   const brand = document.getElementById('panelBrand').value;
-  const powers = DATA.panels.filter(p => p.brand === brand && p.price).map(p => p.power);
+  const powers = DATA.panels.filter(p => p.brand === brand && p.price).map(p => p.power).sort((a, b) => a - b);
   const sel = document.getElementById('panelPower');
   sel.innerHTML = powers.map(p => `<option value="${p}">${p} W</option>`).join('');
   if (powers.includes(DATA.defaults.panelPower)) sel.value = DATA.defaults.panelPower;
@@ -163,6 +170,11 @@ function recalc() {
   document.getElementById('docClientNameOut').textContent = clientNameVal
     ? (clientPhoneVal ? `${clientNameVal} · ${clientPhoneVal}` : clientNameVal)
     : 'غير محدد';
+
+  const unlocked = isAdmin || (clientNameVal !== '' && isValidEgyptPhone(clientPhoneVal));
+  document.getElementById('priceGate').style.display = unlocked ? 'block' : 'none';
+  document.getElementById('priceLockCard').style.display = unlocked ? 'none' : 'block';
+  if (!unlocked) return;
   document.getElementById('summaryBadge').textContent = `${inputs.inverterBrand} ${r.H8.toFixed(0)} KW`;
   document.getElementById('statPricePerKW').textContent = fmt(r.totals.pricePerKW);
   document.getElementById('statPricePerKWLabel').textContent = `${sym}/KW`;
@@ -240,11 +252,6 @@ loadData().catch(err => {
 function preparePrintAndPrint() {
   const r = LAST_RESULT;
   if (!r || !r.totals) { toast('من فضلك أكمل بيانات الحسبة أولًا', 'err'); return; }
-  if (!isAdmin || !GH.token) {
-    toast('لازم تسجل دخول كأدمن *متصل بـ GitHub* (مش وضع بدون اتصال) عشان العرض يتسجل في السجل المركزي', 'err');
-    goToView('admin');
-    return;
-  }
   const sym = DATA.meta.currencySymbol;
   const inputs = readInputs();
 
@@ -359,29 +366,28 @@ function saveQuoteLocally(record) {
   } catch (e) { console.error('local quote log failed', e); }
 }
 
-async function syncQuoteToGithub(record) {
-  const res = await ghGetFileRaw('quotes.json');
-  let quotesData = { quotes: [] };
-  let sha = null;
-  if (res.ok) {
-    const json = await res.json();
-    sha = json.sha;
-    quotesData = JSON.parse(decodeURIComponent(escape(atob(json.content))));
-    if (!Array.isArray(quotesData.quotes)) quotesData.quotes = [];
+async function syncQuoteToWorker(record) {
+  const workerUrl = DATA.meta.quotesWorkerUrl;
+  if (!workerUrl) return; // مفيش Worker متظبط - السجل المحلي هو الوحيد المتاح
+  record.loggedBy = isAdmin ? 'admin' : 'public';
+  const res = await fetch(`${workerUrl}/quotes`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(record),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || 'فشل تسجيل العرض في السجل المركزي');
   }
-  quotesData.quotes.unshift(record);
-  await ghPutFileRaw('quotes.json', quotesData, sha, `عرض سعر جديد: ${record.id}`);
 }
 
 function logQuoteRecord(r, inputs, quoteFilename) {
   const record = buildQuoteRecord(r, inputs, quoteFilename);
   saveQuoteLocally(record);
-  if (isAdmin && GH.token) {
-    syncQuoteToGithub(record).catch(e => {
-      console.error('quote github sync failed', e);
-      toast('العرض اتحفظ محليًا، لكن حصل خطأ في مزامنته على GitHub', 'err');
-    });
-  }
+  syncQuoteToWorker(record).catch(e => {
+    console.error('quote worker sync failed', e);
+    // العرض اتحفظ محليًا على أي حال، فمنعرضش خطأ مزعج لعميل عادي بيطبع عرضه
+  });
 }
 
 function waLink(phone) {
@@ -452,23 +458,29 @@ async function renderQuotesLog(tryRemote) {
   renderQuoteList(document.getElementById('quotesLogLocal'), applyQuotesSearch(localLog), 'لسه مفيش عروض متسجلة على الجهاز ده.');
 
   const remoteBox = document.getElementById('quotesLogRemote');
-  if (!tryRemote || !GH.token) {
-    remoteBox.innerHTML = `<p class="qlog-empty">السجل المركزي بيظهر لما تكون متصل بـ GitHub (مش وضع بدون اتصال).</p>`;
+  const workerUrl = DATA.meta.quotesWorkerUrl;
+  if (!tryRemote || !workerUrl) {
+    remoteBox.innerHTML = `<p class="qlog-empty">${workerUrl ? 'دوس "تحديث السجل المركزي" عشان تجيب أحدث العروض.' : 'محتاج تظبط رابط الـ Worker فوق الأول عشان السجل المركزي يشتغل.'}</p>`;
+    return;
+  }
+  if (!ADMIN_CREDS) {
+    remoteBox.innerHTML = `<p class="qlog-empty">سجل خروج ودخول تاني عشان نقدر نتحقق من صلاحيتك لقراءة السجل المركزي.</p>`;
     return;
   }
   remoteBox.innerHTML = `<p class="qlog-empty">جاري التحميل...</p>`;
   try {
-    const res = await ghGetFileRaw('quotes.json');
+    const params = new URLSearchParams({ username: ADMIN_CREDS.username, password: ADMIN_CREDS.password });
+    const res = await fetch(`${workerUrl}/quotes?${params}`);
     if (res.ok) {
       const json = await res.json();
-      const parsed = JSON.parse(decodeURIComponent(escape(atob(json.content))));
-      REMOTE_QUOTES = Array.isArray(parsed.quotes) ? parsed.quotes : [];
+      REMOTE_QUOTES = Array.isArray(json.quotes) ? json.quotes : [];
+      renderQuoteList(remoteBox, applyQuotesSearch(REMOTE_QUOTES), 'لسه مفيش عروض متسجلة في السجل المركزي.');
     } else {
       REMOTE_QUOTES = [];
+      remoteBox.innerHTML = `<p class="qlog-empty">تعذر تسجيل الدخول للسجل المركزي - تأكد من رابط الـ Worker.</p>`;
     }
-    renderQuoteList(remoteBox, applyQuotesSearch(REMOTE_QUOTES), 'لسه مفيش عروض متسجلة على GitHub.');
   } catch (e) {
-    remoteBox.innerHTML = `<p class="qlog-empty">تعذر تحميل السجل المركزي.</p>`;
+    remoteBox.innerHTML = `<p class="qlog-empty">تعذر الاتصال بالسجل المركزي.</p>`;
   }
 }
 
@@ -489,6 +501,8 @@ async function sha256Hex(text) {
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+let ADMIN_CREDS = null; // { username, password } - محتفظ بيها في الذاكرة بس عشان نستخدمها في قراءة سجل العروض من الـ Worker
+
 async function checkAdminCredentials() {
   const uname = document.getElementById('adminUsername').value.trim();
   const pwd = document.getElementById('adminPasswordInput').value;
@@ -498,6 +512,7 @@ async function checkAdminCredentials() {
     toast('اسم المستخدم أو كلمة المرور غير صحيحة', 'err');
     return false;
   }
+  ADMIN_CREDS = { username: uname, password: pwd };
   return true;
 }
 
@@ -575,7 +590,7 @@ function enterAdmin(connected) {
   renderAdminForms();
   isAdmin = true;
   recalc(); // يظهر كارت التكلفة والربح في الحاسبة فورًا
-  renderQuotesLog(connected);
+  renderQuotesLog(true);
 }
 
 document.getElementById('lockAdminBtn').addEventListener('click', () => {
@@ -590,6 +605,7 @@ function renderAdminForms() {
   document.getElementById('cfgCompanyName').value = DATA.meta.companyName;
   document.getElementById('cfgCurrencySymbol').value = DATA.meta.currencySymbol;
   document.getElementById('newAdminUsername').value = DATA.meta.adminUsername || '';
+  document.getElementById('cfgQuotesWorkerUrl').value = DATA.meta.quotesWorkerUrl || '';
 
   document.getElementById('cfgVoltageLimitCap').value = DATA.voltageLimitCap;
   document.getElementById('cfgExpectedVACFactor').value = DATA.expectedVACFactor;
@@ -933,6 +949,7 @@ document.getElementById('addMcbBtn').addEventListener('click', () => {
 function collectConstantsIntoData() {
   DATA.meta.companyName = document.getElementById('cfgCompanyName').value;
   DATA.meta.currencySymbol = document.getElementById('cfgCurrencySymbol').value;
+  DATA.meta.quotesWorkerUrl = document.getElementById('cfgQuotesWorkerUrl').value.trim().replace(/\/+$/, '');
   DATA.combinerBox.discount = Number(document.getElementById('cfgCombinerDiscount').value);
   DATA.combinerBox.stringsPerBox = Number(document.getElementById('cfgStringsPerBox').value) || 6;
   DATA.steel.fixedPricePerKW = Number(document.getElementById('cfgSteelFixed').value);
