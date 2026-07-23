@@ -3,6 +3,9 @@
    منقول بالكامل من معادلات ملف الإكسل "Off_Grid_Calculations" (شيتات:
    Data input / OFF GRID INVERTER / Battery list / modified offer)
    كل دالة هنا تقابل خلية أو مجموعة خلايا في الشيت الأصلي - انظر التعليقات
+
+   الزائر بيختار الماركة بس للانفرتر والبطارية، والموديل/القدرة بيتحددوا
+   تلقائيًا حسب إجمالي الأحمال المطلوب تشغيلها (بدل ما يختار موديل بعينه)
    ========================================================================= */
 
 function roundUpTo(value, decimals) {
@@ -10,25 +13,39 @@ function roundUpTo(value, decimals) {
   return Math.ceil(value * f) / f;
 }
 
-function findOffgridInverter(data, brand, type) {
-  return data.offgrid.inverters.find(m => m.brand === brand && m.type === type);
+/** يختار أصغر انفرتر من نفس الماركة تكفي قدرته لتغطية القدرة اللحظية المطلوبة */
+function pickInverterForBrand(data, brand, requiredKW) {
+  const options = data.offgrid.inverters.filter(m => m.brand === brand).sort((a, b) => a.powerKW - b.powerKW);
+  if (!options.length) return { model: null, undersized: false };
+  const fit = options.find(m => m.powerKW >= requiredKW);
+  if (fit) return { model: fit, undersized: false };
+  return { model: options[options.length - 1], undersized: true }; // أكبر موديل متاح، بس لسه أصغر من المطلوب
 }
 
-function findBattery(data, brand, voltage, ah) {
-  return data.offgrid.batteries.find(b => b.brand === brand && Number(b.voltage) === Number(voltage) && Number(b.ah) === Number(ah));
+/** يختار بطارية من نفس الماركة بنفس جهد الانفرتر (أو أقرب جهد أقل منه)،
+ *  وبأكبر سعة AH متاحة (عشان أقل عدد بطاريات ممكن) */
+function pickBatteryForBrand(data, brand, inverterVoltage) {
+  const brandOptions = data.offgrid.batteries.filter(b => b.brand === brand);
+  if (!brandOptions.length) return null;
+  const compatible = brandOptions.filter(b => b.voltage <= inverterVoltage);
+  if (!compatible.length) return null;
+  const bestVoltage = Math.max(...compatible.map(b => b.voltage));
+  const atBestVoltage = compatible.filter(b => b.voltage === bestVoltage);
+  return atBestVoltage.sort((a, b) => b.ah - a.ah)[0]; // أكبر سعة AH عند نفس الجهد
 }
 
 /**
  * inputs = {
- *   panelBrand, panelPower,           // نفس ألواح النظام الرئيسي
- *   invBrand, invType,                // من كتالوج انفرترات الأوف جريد
- *   battBrand, battVoltage, battAh,   // من كتالوج البطاريات
+ *   panelBrand, panelPower,            // نفس ألواح النظام الرئيسي
+ *   invBrand, battBrand,               // الماركة بس - القدرة بتتحدد تلقائيًا
  *   phase: 'single' | 'three',
- *   psh, safetyFactor,                // قابلين للتعديل لكل عرض (افتراضي من data.offgrid)
- *   morningEnabled, nightEnabled,     // Data input!E8 / E9
+ *   psh, safetyFactor,
+ *   morningEnabled, nightEnabled,      // Data input!E8 / E9
  *   extraPanelsOverride, extraBatteryStrings, manualPanelAdj, installQtyOverride,
  *   extraDiscountAmount,
  *   loads: [{ name, watt, runningFactor, nightHours, dayHours, count }, ...]
+ *           (nightHours/dayHours قابلين للتعديل من الزائر؛ لو سابهم زي ما
+ *           هما بييجوا بالقيم الافتراضية اللي حطها الأدمن)
  * }
  */
 function computeOffgridOffer(data, inputs) {
@@ -36,18 +53,17 @@ function computeOffgridOffer(data, inputs) {
   const errors = [];
 
   const panel = findPanel(data, inputs.panelBrand, inputs.panelPower);
-  const inv = findOffgridInverter(data, inputs.invBrand, inputs.invType);
-  const batt = findBattery(data, inputs.battBrand, inputs.battVoltage, inputs.battAh);
-
-  if (!panel) errors.push('اللوح المختار غير موجود في القائمة.');
-  if (!inv) errors.push('الانفرتر المختار غير موجود في القائمة.');
-  if (!batt) errors.push('البطارية المختارة غير موجودة في القائمة.');
-  if (errors.length) return { errors };
+  if (!panel) { errors.push('اللوح المختار غير موجود في القائمة.'); return { errors }; }
+  if (!inputs.invBrand) { errors.push('اختار ماركة الانفرتر.'); return { errors }; }
+  if (!inputs.battBrand) { errors.push('اختار ماركة البطارية.'); return { errors }; }
 
   const psh = Number(inputs.psh) || og.psh;
   const safetyFactor = Number(inputs.safetyFactor) || og.safetyFactor;
 
-  /* ---- 1) حمل الأحمال: لكل بند "الاحمال" في الجدول ---- */
+  /* ---- 1) حمل الأحمال: لكل بند "الاحمال" في الجدول ----
+     فترة النهار معرّفة من 8 صباحًا لـ 4 عصرًا (8 ساعات)، وباقي الـ24
+     ساعة (16 ساعة) تعتبر فترة ليلية - الزائر بيدخل عدد الساعات لكل
+     جهاز في الفترتين، ولو مش عارف بيسيب القيم الافتراضية */
   let R2 = 0;   // اجمالي القدرة اللحظية Max Power (Data input!R2)
   let sumNight = 0, sumDay = 0;
   const loadRows = (inputs.loads || []).map(l => {
@@ -69,13 +85,20 @@ function computeOffgridOffer(data, inputs) {
   const R5 = R3 + R4;                              // اجمالي قدرة المطلوبة لليوم WH
   const R6 = psh ? R5 / psh : 0;                    // NEED POWER TO BE INSTALLED W
 
-  /* ---- 2) توافق الجهد بين الانفرتر والبطارية ---- */
+  /* ---- 2) اختيار الانفرتر تلقائيًا حسب الماركة + القدرة اللحظية المطلوبة ---- */
+  const requiredKW = roundUpTo(R2 / 1000, 1);
+  const { model: inv, undersized: invUndersized } = pickInverterForBrand(data, inputs.invBrand, requiredKW);
+  if (!inv) { errors.push(`مفيش موديلات انفرتر مسجلة لماركة "${inputs.invBrand}".`); return { errors }; }
+  if (invUndersized) errors.push(`أكبر انفرتر متاح من ماركة ${inv.brand} (${inv.powerKW} KW) لسه أصغر من القدرة اللحظية المطلوبة (${requiredKW} KW) - قلل الأحمال أو جرّب ماركة تانية.`);
   const inverterVoltage = inv.voltage;
+
+  /* ---- 3) اختيار البطارية تلقائيًا حسب الماركة + جهد الانفرتر ---- */
+  const batt = pickBatteryForBrand(data, inputs.battBrand, inverterVoltage);
+  if (!batt) { errors.push(`مفيش بطاريات من ماركة "${inputs.battBrand}" بجهد متوافق مع الانفرتر (${inverterVoltage}V) - جرّب ماركة تانية.`); return { errors }; }
   const batteryVoltage = batt.voltage;
   const designOkay = inverterVoltage >= batteryVoltage;
-  if (!designOkay) errors.push(`جهد البطارية (${batteryVoltage}V) أكبر من جهد الانفرتر (${inverterVoltage}V) - غير متوافقين، اختار بطارية أو انفرتر تاني.`);
 
-  /* ---- 3) تصميم بنك البطاريات ---- */
+  /* ---- 4) تصميم بنك البطاريات ---- */
   const R7 = (batt.dod && inverterVoltage) ? (R4 * safetyFactor) / (batt.dod * inverterVoltage) : 0; // BATTERY CAPACITY FOR DAY AH
   const O7 = designOkay ? inverterVoltage / batteryVoltage : 0;  // عدد البطاريات في الاسترينج
   const extraStrings = Number(inputs.extraBatteryStrings) || 0;
@@ -84,7 +107,7 @@ function computeOffgridOffer(data, inputs) {
   const O9 = O7 * O8 * batt.ah * batteryVoltage;    // اجمالي القدرة المخزنة WH
   const O10 = I10 ? (O9 - I10) / I10 : null;        // هامش أمان التخزين (اختياري/عرض فقط)
 
-  /* ---- 4) تصميم مصفوفة الألواح ---- */
+  /* ---- 5) تصميم مصفوفة الألواح ---- */
   const panelWatt = Number(panel.power);
   const chargeSunHours = Number(og.batteryChargeSunHours);
   const byBattery = panelWatt ? Math.ceil(O9 / (chargeSunHours * panelWatt)) : 0;
@@ -95,10 +118,6 @@ function computeOffgridOffer(data, inputs) {
   const O2 = Math.max(byBattery, byDailyLoad) + manualPanelAdj + extraPanels; // عدد الالواح المطلوبة
   const O3 = O2 * panelWatt * psh;                 // اجمالي الانتاجية للالواح WH/يوم
   const installedKW = (O2 * panelWatt) / 1000;
-
-  /* ---- 5) تحقق من حجم الانفرتر ---- */
-  const inverterSizeOkay = inv.powerKW > roundUpTo(R2 / 1000, 1);
-  if (!inverterSizeOkay) errors.push(`الانفرتر المختار (${inv.powerKW} KW) أصغر من القدرة اللحظية المطلوبة (${roundUpTo(R2 / 1000, 1)} KW) - اختار انفرتر أكبر.`);
 
   /* ---- 6) عرض السعر (تسعير كل بند: عميل مقابل تكلفة) ---- */
   const phaseQty = inputs.phase === 'three' ? 3 : 1;
@@ -156,7 +175,7 @@ function computeOffgridOffer(data, inputs) {
     R2, R5, R6, R7,
     O2, O3, O6, O7, O8, O9, O10,
     installedKW, storedKWh: O9 / 1000,
-    designOkay, inverterSizeOkay,
+    designOkay, inverterSizeOkay: !invUndersized,
     steelQty, cablesQty, installQty, phaseQty,
     loadRows,
     offer: { rows },

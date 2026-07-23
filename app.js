@@ -1245,40 +1245,42 @@ function populateOgSelectors() {
   populateOgPanelPowers();
   document.getElementById('ogPanelPower').value = DATA.defaults.panelPower;
 
-  document.getElementById('ogInvSelect').innerHTML = DATA.offgrid.inverters.map((inv, i) =>
-    `<option value="${i}">${inv.brand} ${inv.type} - ${inv.voltage}V - ${inv.powerKW}KW</option>`).join('');
+  const invBrands = [...new Set(DATA.offgrid.inverters.map(m => m.brand))].sort((a, b) => a.localeCompare(b, 'ar'));
+  document.getElementById('ogInvBrand').innerHTML = invBrands.map(b => `<option value="${b}">${b}</option>`).join('');
 
-  document.getElementById('ogBattSelect').innerHTML = DATA.offgrid.batteries.map((b, i) =>
-    `<option value="${i}">${b.brand} ${b.ah}AH-${b.voltage}V (DOD ${Math.round(b.dod * 100)}%)</option>`).join('');
+  const battBrands = [...new Set(DATA.offgrid.batteries.map(b => b.brand))].sort((a, b) => a.localeCompare(b, 'ar'));
+  document.getElementById('ogBattBrand').innerHTML = battBrands.map(b => `<option value="${b}">${b}</option>`).join('');
 
   document.getElementById('ogPsh').value = DATA.offgrid.psh;
   document.getElementById('ogSafetyFactor').value = DATA.offgrid.safetyFactor;
 
   document.getElementById('ogLoadsList').innerHTML = DATA.offgrid.loads.map((l, i) => `
-    <div class="switch-row" style="border-bottom:1px solid var(--line-soft); padding:8px 0;">
-      <div class="lbl" style="flex:1;">${l.name} <small>${l.watt}W</small></div>
-      <input type="number" class="og-load-count" data-load-index="${i}" value="0" min="0" step="1"
-        style="width:80px; padding:6px 8px; font-size:13px;">
+    <div class="qlog-grid" style="grid-template-columns:1fr repeat(3,90px); gap:6px; align-items:center; border-bottom:1px solid var(--line-soft); padding:6px 2px;">
+      <div style="font-size:13px;">${l.name} <small style="color:var(--ink-faint);">${l.watt}W</small></div>
+      <input type="number" class="og-load-count" data-load-index="${i}" value="0" min="0" step="1" style="padding:6px 4px; font-size:12.5px; text-align:center;">
+      <input type="number" class="og-load-day" data-load-index="${i}" value="${l.dayHours}" min="0" max="8" step="0.5" style="padding:6px 4px; font-size:12.5px; text-align:center;">
+      <input type="number" class="og-load-night" data-load-index="${i}" value="${l.nightHours}" min="0" max="16" step="0.5" style="padding:6px 4px; font-size:12.5px; text-align:center;">
     </div>
   `).join('');
-  document.querySelectorAll('.og-load-count').forEach(inp => inp.addEventListener('input', ogRecalc));
+  document.querySelectorAll('.og-load-count, .og-load-day, .og-load-night').forEach(inp => inp.addEventListener('input', ogRecalc));
 }
 
 function readOgInputs() {
-  const inv = DATA.offgrid.inverters[Number(document.getElementById('ogInvSelect').value)];
-  const batt = DATA.offgrid.batteries[Number(document.getElementById('ogBattSelect').value)];
-  const loads = DATA.offgrid.loads.map((l, i) => ({
-    ...l,
-    count: Number(document.querySelector(`.og-load-count[data-load-index="${i}"]`)?.value) || 0
-  }));
+  const loads = DATA.offgrid.loads.map((l, i) => {
+    const dayVal = document.querySelector(`.og-load-day[data-load-index="${i}"]`)?.value;
+    const nightVal = document.querySelector(`.og-load-night[data-load-index="${i}"]`)?.value;
+    return {
+      ...l,
+      count: Number(document.querySelector(`.og-load-count[data-load-index="${i}"]`)?.value) || 0,
+      dayHours: dayVal === '' ? l.dayHours : Number(dayVal),
+      nightHours: nightVal === '' ? l.nightHours : Number(nightVal),
+    };
+  });
   return {
     panelBrand: document.getElementById('ogPanelBrand').value,
     panelPower: Number(document.getElementById('ogPanelPower').value),
-    invBrand: inv ? inv.brand : '',
-    invType: inv ? inv.type : '',
-    battBrand: batt ? batt.brand : '',
-    battVoltage: batt ? batt.voltage : 0,
-    battAh: batt ? batt.ah : 0,
+    invBrand: document.getElementById('ogInvBrand').value,
+    battBrand: document.getElementById('ogBattBrand').value,
     phase: document.getElementById('ogPhase').value,
     psh: Number(document.getElementById('ogPsh').value),
     safetyFactor: Number(document.getElementById('ogSafetyFactor').value),
@@ -1293,7 +1295,7 @@ function readOgInputs() {
 }
 
 function bindOgInputs() {
-  const ids = ['ogClientName','ogClientPhone','ogPhase','ogPanelBrand','ogPanelPower','ogInvSelect','ogBattSelect',
+  const ids = ['ogClientName','ogClientPhone','ogPhase','ogPanelBrand','ogPanelPower','ogInvBrand','ogBattBrand',
     'ogPsh','ogSafetyFactor','ogMorningEnabled','ogNightEnabled','ogManualPanelAdj','ogExtraBatteryStrings',
     'ogInstallQtyOverride','ogExtraDiscount'];
   ids.forEach(id => {
