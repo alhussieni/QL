@@ -13,6 +13,15 @@ function isValidEgyptPhone(raw) {
   return /^01[0125]\d{8}$/.test(d);
 }
 
+function isValidPhone(raw) {
+  const trimmed = String(raw || '').trim();
+  if (isValidEgyptPhone(trimmed)) return true;
+  // رقم دولي عام (لعملاء من خارج مصر): أرقام بس (يُسمح بـ + في الأول)،
+  // من 8 لـ 15 رقم حسب معيار E.164 الدولي لأرقام الهواتف
+  const digits = trimmed.replace(/[^\d]/g, '');
+  return /^\d{8,15}$/.test(digits);
+}
+
 function toast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -41,6 +50,9 @@ async function loadData() {
   populateSelectors();
   bindInputs();
   recalc();
+  populateOgSelectors();
+  bindOgInputs();
+  ogRecalc();
 }
 
 function uniqueBrands() {
@@ -171,7 +183,7 @@ function recalc() {
     ? (clientPhoneVal ? `${clientNameVal} · ${clientPhoneVal}` : clientNameVal)
     : 'غير محدد';
 
-  const unlocked = isAdmin || (clientNameVal !== '' && isValidEgyptPhone(clientPhoneVal));
+  const unlocked = isAdmin || (clientNameVal !== '' && isValidPhone(clientPhoneVal));
   document.getElementById('priceGate').style.display = unlocked ? 'block' : 'none';
   document.getElementById('priceLockCard').style.display = unlocked ? 'none' : 'block';
   if (!unlocked) return;
@@ -289,12 +301,14 @@ function preparePrintAndPrint() {
     <div class="row"><span>${t.label} (${Math.round(t.pct*100)}%)</span><span>${fmt(t.amount)} ${sym}</span></div>
   `).join('');
 
-  logQuoteRecord(r, inputs, quoteFilename);
+  logQuoteRecord(buildQuoteRecord(r, inputs, quoteFilename));
 
+  document.getElementById('printQuote').classList.add('pq-active');
   const prevTitle = document.title;
   document.title = quoteFilename;
   window.print();
   window.addEventListener('afterprint', function restoreTitle() {
+    document.getElementById('printQuote').classList.remove('pq-active');
     document.title = prevTitle;
     window.removeEventListener('afterprint', restoreTitle);
   });
@@ -339,6 +353,7 @@ async function ghPutFileRaw(path, dataObj, sha, message) {
 function buildQuoteRecord(r, inputs, quoteFilename) {
   return {
     id: quoteFilename,
+    type: 'ongrid',
     savedAt: new Date().toISOString(),
     clientName: document.getElementById('clientName').value.trim() || 'غير محدد',
     clientPhone: document.getElementById('clientPhone').value.trim() || '',
@@ -381,8 +396,7 @@ async function syncQuoteToWorker(record) {
   }
 }
 
-function logQuoteRecord(r, inputs, quoteFilename) {
-  const record = buildQuoteRecord(r, inputs, quoteFilename);
+function logQuoteRecord(record) {
   saveQuoteLocally(record);
   syncQuoteToWorker(record).catch(e => {
     console.error('quote worker sync failed', e);
@@ -393,8 +407,10 @@ function logQuoteRecord(r, inputs, quoteFilename) {
 function waLink(phone) {
   let digits = String(phone || '').replace(/\D/g, '');
   if (!digits) return null;
-  if (digits.startsWith('0')) digits = '2' + digits;           // مصر: 0xxxxxxxxxx → 20xxxxxxxxxx
-  else if (!digits.startsWith('20') && digits.length <= 11) digits = '20' + digits;
+  // رقم مصري محلي بالصيغة المعروفة (01 + 9 أرقام) → حوّله لصيغة دولية بكود مصر
+  if (/^01[0125]\d{8}$/.test(digits)) digits = '20' + digits.slice(1);
+  // أي رقم تاني (عميل من خارج مصر) بيتفتح زي ما اتكتب - المفروض يبقى مكتوب
+  // بصيغة دولية (بكود الدولة) من غير ما نخمّن كود دولة غلط
   return `https://wa.me/${digits}`;
 }
 
@@ -407,10 +423,30 @@ function quoteRecordHtml(rec) {
   const paymentHtml = (rec.paymentTerms || []).map(t => `
     <div class="line"><span>${t.label} (${Math.round(t.pct*100)}%)</span><span>${fmt(t.amount)} ${sym}</span></div>
   `).join('');
+  const isOffgrid = rec.type === 'offgrid';
+  const gridCellsHtml = isOffgrid ? `
+    <div class="cell"><div class="k">رقم العرض</div><div class="v" style="font-family:var(--mono); font-size:10.5px;">${rec.id}</div></div>
+    <div class="cell"><div class="k">نوع النظام</div><div class="v">أوف جريد (${rec.phase === 'three' ? 'ثلاثي' : 'أحادي'})</div></div>
+    <div class="cell"><div class="k">اللوح</div><div class="v">${rec.panelBrand} ${rec.panelPower}W × ${rec.panelCount}</div></div>
+    <div class="cell"><div class="k">الانفرتر</div><div class="v">${rec.inverterBrand} ${rec.inverterModel}</div></div>
+    <div class="cell"><div class="k">البطارية</div><div class="v">${rec.batteryModel} × ${rec.batteryCount}</div></div>
+    <div class="cell"><div class="k">القدرة المخزنة</div><div class="v">${rec.storedKWh} KWh</div></div>
+    <div class="cell"><div class="k">السعر قبل الخصم</div><div class="v">${fmt(rec.beforeDiscount)} ${sym}</div></div>
+    <div class="cell"><div class="k">السعر/KW</div><div class="v">${fmt(rec.pricePerKW)} ${sym}</div></div>
+  ` : `
+    <div class="cell"><div class="k">رقم العرض</div><div class="v" style="font-family:var(--mono); font-size:10.5px;">${rec.id}</div></div>
+    <div class="cell"><div class="k">قدرة الموتور</div><div class="v">${rec.motorHP} HP</div></div>
+    <div class="cell"><div class="k">نوع الشاسية</div><div class="v">${rec.structureType}</div></div>
+    <div class="cell"><div class="k">اللوح</div><div class="v">${rec.panelBrand} ${rec.panelPower}W × ${rec.panelCount}</div></div>
+    <div class="cell"><div class="k">القدرة المصممة</div><div class="v">${rec.designedKW} KW</div></div>
+    <div class="cell"><div class="k">الانفرتر</div><div class="v">${rec.inverterBrand} ${rec.inverterModel}</div></div>
+    <div class="cell"><div class="k">السعر قبل الخصم</div><div class="v">${fmt(rec.beforeDiscount)} ${sym}</div></div>
+    <div class="cell"><div class="k">السعر/KW</div><div class="v">${fmt(rec.pricePerKW)} ${sym}</div></div>
+  `;
   return `
     <div class="qlog-item" data-search="${(rec.clientName+' '+rec.clientPhone).toLowerCase()}">
       <div class="qlog-head">
-        <div><b>${rec.clientName}</b><span class="qlog-phone">${rec.clientPhone || 'بدون رقم'}</span></div>
+        <div><b>${rec.clientName}</b><span class="qlog-phone">${rec.clientPhone || 'بدون رقم'}</span>${isOffgrid ? ' <span class="badge" style="font-size:10px; padding:2px 8px;">أوف جريد</span>' : ''}</div>
         <div class="qlog-meta">
           <span>${new Date(rec.savedAt).toLocaleDateString('ar-EG')}</span>
           <span class="qlog-price">${fmt(rec.finalPrice)} ${sym}</span>
@@ -421,16 +457,7 @@ function quoteRecordHtml(rec) {
           ${rec.clientPhone ? `<a class="call" href="tel:${rec.clientPhone}">📞 اتصال</a>` : ''}
           ${wa ? `<a class="wa" href="${wa}" target="_blank" rel="noopener">💬 واتساب</a>` : ''}
         </div>
-        <div class="qlog-grid">
-          <div class="cell"><div class="k">رقم العرض</div><div class="v" style="font-family:var(--mono); font-size:10.5px;">${rec.id}</div></div>
-          <div class="cell"><div class="k">قدرة الموتور</div><div class="v">${rec.motorHP} HP</div></div>
-          <div class="cell"><div class="k">نوع الشاسية</div><div class="v">${rec.structureType}</div></div>
-          <div class="cell"><div class="k">اللوح</div><div class="v">${rec.panelBrand} ${rec.panelPower}W × ${rec.panelCount}</div></div>
-          <div class="cell"><div class="k">القدرة المصممة</div><div class="v">${rec.designedKW} KW</div></div>
-          <div class="cell"><div class="k">الانفرتر</div><div class="v">${rec.inverterBrand} ${rec.inverterModel}</div></div>
-          <div class="cell"><div class="k">السعر قبل الخصم</div><div class="v">${fmt(rec.beforeDiscount)} ${sym}</div></div>
-          <div class="cell"><div class="k">السعر/KW</div><div class="v">${fmt(rec.pricePerKW)} ${sym}</div></div>
-        </div>
+        <div class="qlog-grid">${gridCellsHtml}</div>
         <table class="offer" style="margin-bottom:12px;">
           <thead><tr><th>#</th><th>البند</th><th>النوع</th><th>الكمية</th></tr></thead>
           <tbody>${offerRowsHtml}</tbody>
@@ -590,6 +617,7 @@ function enterAdmin(connected) {
   renderAdminForms();
   isAdmin = true;
   recalc(); // يظهر كارت التكلفة والربح في الحاسبة فورًا
+  ogRecalc();
   renderQuotesLog(true);
 }
 
@@ -598,6 +626,7 @@ document.getElementById('lockAdminBtn').addEventListener('click', () => {
   document.getElementById('admin-panel').style.display = 'none';
   isAdmin = false;
   recalc(); // يخفي كارت التكلفة والربح بعد الخروج
+  ogRecalc();
 });
 
 /* ---------------------------- admin form rendering ---------------------------- */
@@ -694,6 +723,36 @@ function renderAdminForms() {
   document.getElementById('cfgSupplyFixed').value = DATA.installation.supplyInstallFixedPerKW;
   document.getElementById('cfgSupplyRot').value = DATA.installation.supplyInstallRotationalPerKW;
   document.getElementById('cfgPanelMarkup').value = DATA.panelMarkupPerWatt;
+
+  // ---- أوف جريد ----
+  const ogInvBody = document.querySelector('#ogInvTable tbody');
+  ogInvBody.innerHTML = '';
+  DATA.offgrid.inverters.forEach((m, i) => ogInvBody.appendChild(ogInvRow(m, i)));
+
+  const ogBattBody = document.querySelector('#ogBattTable tbody');
+  ogBattBody.innerHTML = '';
+  DATA.offgrid.batteries.forEach((b, i) => ogBattBody.appendChild(ogBattRow(b, i)));
+
+  const ogLoadsBody = document.querySelector('#ogLoadsTable tbody');
+  ogLoadsBody.innerHTML = '';
+  DATA.offgrid.loads.forEach((l, i) => ogLoadsBody.appendChild(ogLoadRow(l, i)));
+
+  document.getElementById('cfgOgPsh').value = DATA.offgrid.psh;
+  document.getElementById('cfgOgSafetyFactor').value = DATA.offgrid.safetyFactor;
+  document.getElementById('cfgOgExtraPanels').value = DATA.offgrid.extraPanels;
+  document.getElementById('cfgOgChargeSunHours').value = DATA.offgrid.batteryChargeSunHours;
+  document.getElementById('cfgOgPanelMarkup').value = DATA.offgrid.panelMarkupPerWatt;
+  document.getElementById('cfgOgSteelCost').value = DATA.offgrid.steelCostPerUnit;
+  document.getElementById('cfgOgSteelMargin').value = DATA.offgrid.steelMarginPerUnit;
+  document.getElementById('cfgOgCableCost').value = DATA.offgrid.cablesCostPerMeter;
+  document.getElementById('cfgOgCableCustomer').value = DATA.offgrid.cablesCustomerPerMeter;
+  document.getElementById('cfgOgCableMetersPerSteel').value = DATA.offgrid.cableMetersPerSteelUnit;
+  document.getElementById('cfgOgAccCost').value = DATA.offgrid.accessoriesCostFixed;
+  document.getElementById('cfgOgAccCustomer').value = DATA.offgrid.accessoriesCustomerFixed;
+  document.getElementById('cfgOgTransportCost').value = DATA.offgrid.transportCostFixed;
+  document.getElementById('cfgOgTransportCustomer').value = DATA.offgrid.transportCustomerFixed;
+  document.getElementById('cfgOgInstallCost').value = DATA.offgrid.installCostPerUnit;
+  document.getElementById('cfgOgInstallCustomer').value = DATA.offgrid.installCustomerPerUnit;
 }
 
 function panelRow(p, i) {
@@ -723,6 +782,54 @@ function invRow(m, i) {
     DATA.inverter.models[i][inp.dataset.field] = val;
   }));
   tr.querySelector('[data-rm-inv]').addEventListener('click', () => { DATA.inverter.models.splice(i,1); renderAdminForms(); });
+  return tr;
+}
+
+function ogInvRow(m, i) {
+  const tr = document.createElement('tr');
+  const textFields = ['brand', 'type'];
+  const numFields = ['voltage', 'powerKW', 'listPrice', 'discount'];
+  tr.innerHTML =
+    textFields.map(f => `<td><input type="text" value="${m[f] ?? ''}" data-oginv="${i}" data-field="${f}"></td>`).join('') +
+    numFields.map(f => `<td><input type="number" step="${f === 'discount' ? '0.01' : '1'}" value="${m[f] ?? ''}" data-oginv="${i}" data-field="${f}"></td>`).join('') +
+    `<td><button class="rm" data-rm-oginv="${i}">×</button></td>`;
+  tr.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
+    const isNum = numFields.includes(inp.dataset.field);
+    DATA.offgrid.inverters[i][inp.dataset.field] = isNum ? Number(inp.value) : inp.value;
+  }));
+  tr.querySelector('[data-rm-oginv]').addEventListener('click', () => { DATA.offgrid.inverters.splice(i,1); renderAdminForms(); });
+  return tr;
+}
+
+function ogBattRow(b, i) {
+  const tr = document.createElement('tr');
+  const fields = ['brand', 'voltage', 'ah', 'dod', 'listPrice', 'discount'];
+  tr.innerHTML = fields.map(f => {
+    const type = f === 'brand' ? 'text' : 'number';
+    const step = (f === 'dod' || f === 'discount') ? '0.01' : '1';
+    return `<td><input type="${type}" ${type === 'number' ? `step="${step}"` : ''} value="${b[f] ?? ''}" data-ogbatt="${i}" data-field="${f}"></td>`;
+  }).join('') + `<td><button class="rm" data-rm-ogbatt="${i}">×</button></td>`;
+  tr.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
+    const val = inp.dataset.field === 'brand' ? inp.value : Number(inp.value);
+    DATA.offgrid.batteries[i][inp.dataset.field] = val;
+  }));
+  tr.querySelector('[data-rm-ogbatt]').addEventListener('click', () => { DATA.offgrid.batteries.splice(i,1); renderAdminForms(); });
+  return tr;
+}
+
+function ogLoadRow(l, i) {
+  const tr = document.createElement('tr');
+  const fields = ['name', 'watt', 'runningFactor', 'nightHours', 'dayHours'];
+  tr.innerHTML = fields.map(f => {
+    const type = f === 'name' ? 'text' : 'number';
+    const step = f === 'runningFactor' ? '0.01' : '1';
+    return `<td><input type="${type}" ${type === 'number' ? `step="${step}"` : ''} value="${l[f] ?? ''}" data-ogload="${i}" data-field="${f}"></td>`;
+  }).join('') + `<td><button class="rm" data-rm-ogload="${i}">×</button></td>`;
+  tr.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
+    const val = inp.dataset.field === 'name' ? inp.value : Number(inp.value);
+    DATA.offgrid.loads[i][inp.dataset.field] = val;
+  }));
+  tr.querySelector('[data-rm-ogload]').addEventListener('click', () => { DATA.offgrid.loads.splice(i,1); renderAdminForms(); populateOgSelectors(); });
   return tr;
 }
 
@@ -946,6 +1053,81 @@ document.getElementById('addMcbBtn').addEventListener('click', () => {
   });
 });
 
+/* ---- أوف جريد: إضافة انفرتر / بطارية / جهاز ---- */
+document.getElementById('addOgInvBtn').addEventListener('click', () => {
+  openModal({
+    title: 'إضافة انفرتر أوف جريد',
+    fields: [
+      { id:'noiBrand', label:'الماركة *', type:'text', placeholder:'مثال: Must' },
+      { id:'noiType', label:'النوع *', type:'text', placeholder:'مثال: PV18-3024 PRO' },
+      { id:'noiVoltage', label:'الجهد (V) *', type:'number', step:1 },
+      { id:'noiPowerKW', label:'القدرة (KW) *', type:'number', step:0.1 },
+      { id:'noiPrice', label:'السعر (Price List) *', type:'number', step:1 },
+      { id:'noiDiscount', label:'نسبة الخصم (0-1)', type:'number', step:0.01, placeholder:'مثال: 0.1' },
+    ],
+    onConfirm: () => {
+      const brand = gmVal('noiBrand'), type = gmVal('noiType'), voltage = gmNum('noiVoltage'),
+        powerKW = gmNum('noiPowerKW'), listPrice = gmNum('noiPrice'), discount = Number(gmVal('noiDiscount')) || 0;
+      if (!brand || !type || !voltage || !powerKW || !listPrice) { toast('من فضلك أكمل الحقول الأساسية', 'err'); return; }
+      DATA.offgrid.inverters.push({ brand, type, voltage, powerKW, listPrice, discount });
+      closeModal();
+      renderAdminForms();
+      populateOgSelectors();
+      toast('تمت الإضافة - متنساش تحفظ التعديلات', 'ok');
+    }
+  });
+});
+
+document.getElementById('addOgBattBtn').addEventListener('click', () => {
+  openModal({
+    title: 'إضافة بطارية',
+    fields: [
+      { id:'nobBrand', label:'الماركة *', type:'text' },
+      { id:'nobVoltage', label:'الجهد (V) *', type:'number', step:1 },
+      { id:'nobAh', label:'السعة (AH) *', type:'number', step:1 },
+      { id:'nobDod', label:'DOD % (0-1) *', type:'number', step:0.01, placeholder:'مثال: 0.8' },
+      { id:'nobPrice', label:'السعر (Price List) *', type:'number', step:1 },
+      { id:'nobDiscount', label:'نسبة الخصم (0-1)', type:'number', step:0.01 },
+    ],
+    onConfirm: () => {
+      const brand = gmVal('nobBrand'), voltage = gmNum('nobVoltage'), ah = gmNum('nobAh'),
+        dod = gmNum('nobDod'), listPrice = gmNum('nobPrice'), discount = Number(gmVal('nobDiscount')) || 0;
+      if (!brand || !voltage || !ah || !dod || !listPrice) { toast('من فضلك أكمل الحقول الأساسية', 'err'); return; }
+      DATA.offgrid.batteries.push({ brand, voltage, ah, dod, listPrice, discount });
+      closeModal();
+      renderAdminForms();
+      populateOgSelectors();
+      toast('تمت الإضافة - متنساش تحفظ التعديلات', 'ok');
+    }
+  });
+});
+
+document.getElementById('addOgLoadBtn').addEventListener('click', () => {
+  openModal({
+    title: 'إضافة جهاز لقائمة الأحمال',
+    fields: [
+      { id:'nolName', label:'اسم الجهاز *', type:'text', placeholder:'مثال: تكييف 2 حصان' },
+      { id:'nolWatt', label:'القدرة (واط) *', type:'number', step:1 },
+      { id:'nolRf', label:'معامل التشغيل', type:'number', step:0.01, placeholder:'افتراضي 1' },
+      { id:'nolNight', label:'ساعات التشغيل ليلًا', type:'number', step:0.5 },
+      { id:'nolDay', label:'ساعات التشغيل نهارًا', type:'number', step:0.5 },
+    ],
+    onConfirm: () => {
+      const name = gmVal('nolName'), watt = gmNum('nolWatt');
+      if (!name || !watt) { toast('من فضلك أكمل اسم الجهاز والقدرة', 'err'); return; }
+      const runningFactor = gmVal('nolRf') === '' ? 1 : Number(gmVal('nolRf'));
+      const nightHours = gmNum('nolNight') || 0;
+      const dayHours = gmNum('nolDay') || 0;
+      DATA.offgrid.loads.push({ name, watt, runningFactor, nightHours, dayHours });
+      closeModal();
+      renderAdminForms();
+      populateOgSelectors();
+      toast('تمت الإضافة - متنساش تحفظ التعديلات', 'ok');
+    }
+  });
+});
+
+
 function collectConstantsIntoData() {
   DATA.meta.companyName = document.getElementById('cfgCompanyName').value;
   DATA.meta.currencySymbol = document.getElementById('cfgCurrencySymbol').value;
@@ -975,6 +1157,24 @@ function collectConstantsIntoData() {
   DATA.panelMarkupPerWatt = Number(document.getElementById('cfgPanelMarkup').value);
   DATA.voltageLimitCap = Number(document.getElementById('cfgVoltageLimitCap').value);
   DATA.expectedVACFactor = Number(document.getElementById('cfgExpectedVACFactor').value);
+
+  DATA.offgrid.psh = Number(document.getElementById('cfgOgPsh').value);
+  DATA.offgrid.safetyFactor = Number(document.getElementById('cfgOgSafetyFactor').value);
+  DATA.offgrid.extraPanels = Number(document.getElementById('cfgOgExtraPanels').value);
+  DATA.offgrid.batteryChargeSunHours = Number(document.getElementById('cfgOgChargeSunHours').value);
+  DATA.offgrid.panelMarkupPerWatt = Number(document.getElementById('cfgOgPanelMarkup').value);
+  DATA.offgrid.steelCostPerUnit = Number(document.getElementById('cfgOgSteelCost').value);
+  DATA.offgrid.steelMarginPerUnit = Number(document.getElementById('cfgOgSteelMargin').value);
+  DATA.offgrid.cablesCostPerMeter = Number(document.getElementById('cfgOgCableCost').value);
+  DATA.offgrid.cablesCustomerPerMeter = Number(document.getElementById('cfgOgCableCustomer').value);
+  DATA.offgrid.cableMetersPerSteelUnit = Number(document.getElementById('cfgOgCableMetersPerSteel').value);
+  DATA.offgrid.accessoriesCostFixed = Number(document.getElementById('cfgOgAccCost').value);
+  DATA.offgrid.accessoriesCustomerFixed = Number(document.getElementById('cfgOgAccCustomer').value);
+  DATA.offgrid.transportCostFixed = Number(document.getElementById('cfgOgTransportCost').value);
+  DATA.offgrid.transportCustomerFixed = Number(document.getElementById('cfgOgTransportCustomer').value);
+  DATA.offgrid.installCostPerUnit = Number(document.getElementById('cfgOgInstallCost').value);
+  DATA.offgrid.installCustomerPerUnit = Number(document.getElementById('cfgOgInstallCustomer').value);
+
   DATA.meta.lastUpdated = new Date().toISOString().slice(0,10);
 }
 
@@ -1027,3 +1227,242 @@ document.getElementById('updateAdminCredsBtn').addEventListener('click', async (
   document.getElementById('newAdminPassword').value = '';
   toast('تم تحديث بيانات الدخول - اضغط "حفظ التعديلات على GitHub" عشان تتفعّل للجميع', 'ok');
 });
+
+/* =========================================================================
+   حاسبة الأوف جريد - الواجهة (populate / recalc / print)
+   ========================================================================= */
+
+function populateOgPanelPowers() {
+  const brand = document.getElementById('ogPanelBrand').value;
+  const powers = DATA.panels.filter(p => p.brand === brand && p.price).map(p => p.power).sort((a, b) => a - b);
+  document.getElementById('ogPanelPower').innerHTML = powers.map(p => `<option value="${p}">${p}W</option>`).join('');
+}
+
+function populateOgSelectors() {
+  const brands = uniqueBrands();
+  document.getElementById('ogPanelBrand').innerHTML = brands.map(b => `<option value="${b}">${b}</option>`).join('');
+  document.getElementById('ogPanelBrand').value = DATA.defaults.panelBrand;
+  populateOgPanelPowers();
+  document.getElementById('ogPanelPower').value = DATA.defaults.panelPower;
+
+  document.getElementById('ogInvSelect').innerHTML = DATA.offgrid.inverters.map((inv, i) =>
+    `<option value="${i}">${inv.brand} ${inv.type} - ${inv.voltage}V - ${inv.powerKW}KW</option>`).join('');
+
+  document.getElementById('ogBattSelect').innerHTML = DATA.offgrid.batteries.map((b, i) =>
+    `<option value="${i}">${b.brand} ${b.ah}AH-${b.voltage}V (DOD ${Math.round(b.dod * 100)}%)</option>`).join('');
+
+  document.getElementById('ogPsh').value = DATA.offgrid.psh;
+  document.getElementById('ogSafetyFactor').value = DATA.offgrid.safetyFactor;
+
+  document.getElementById('ogLoadsList').innerHTML = DATA.offgrid.loads.map((l, i) => `
+    <div class="switch-row" style="border-bottom:1px solid var(--line-soft); padding:8px 0;">
+      <div class="lbl" style="flex:1;">${l.name} <small>${l.watt}W</small></div>
+      <input type="number" class="og-load-count" data-load-index="${i}" value="0" min="0" step="1"
+        style="width:80px; padding:6px 8px; font-size:13px;">
+    </div>
+  `).join('');
+  document.querySelectorAll('.og-load-count').forEach(inp => inp.addEventListener('input', ogRecalc));
+}
+
+function readOgInputs() {
+  const inv = DATA.offgrid.inverters[Number(document.getElementById('ogInvSelect').value)];
+  const batt = DATA.offgrid.batteries[Number(document.getElementById('ogBattSelect').value)];
+  const loads = DATA.offgrid.loads.map((l, i) => ({
+    ...l,
+    count: Number(document.querySelector(`.og-load-count[data-load-index="${i}"]`)?.value) || 0
+  }));
+  return {
+    panelBrand: document.getElementById('ogPanelBrand').value,
+    panelPower: Number(document.getElementById('ogPanelPower').value),
+    invBrand: inv ? inv.brand : '',
+    invType: inv ? inv.type : '',
+    battBrand: batt ? batt.brand : '',
+    battVoltage: batt ? batt.voltage : 0,
+    battAh: batt ? batt.ah : 0,
+    phase: document.getElementById('ogPhase').value,
+    psh: Number(document.getElementById('ogPsh').value),
+    safetyFactor: Number(document.getElementById('ogSafetyFactor').value),
+    morningEnabled: document.getElementById('ogMorningEnabled').checked,
+    nightEnabled: document.getElementById('ogNightEnabled').checked,
+    manualPanelAdj: document.getElementById('ogManualPanelAdj').value,
+    extraBatteryStrings: document.getElementById('ogExtraBatteryStrings').value,
+    installQtyOverride: document.getElementById('ogInstallQtyOverride').value,
+    extraDiscountAmount: document.getElementById('ogExtraDiscount').value,
+    loads
+  };
+}
+
+function bindOgInputs() {
+  const ids = ['ogClientName','ogClientPhone','ogPhase','ogPanelBrand','ogPanelPower','ogInvSelect','ogBattSelect',
+    'ogPsh','ogSafetyFactor','ogMorningEnabled','ogNightEnabled','ogManualPanelAdj','ogExtraBatteryStrings',
+    'ogInstallQtyOverride','ogExtraDiscount'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    const evt = (el.type === 'checkbox' || el.tagName === 'SELECT') ? 'change' : 'input';
+    el.addEventListener(evt, () => {
+      if (id === 'ogPanelBrand') populateOgPanelPowers();
+      ogRecalc();
+    });
+  });
+  document.getElementById('ogPrintBtn').addEventListener('click', ogPreparePrintAndPrint);
+}
+
+let LAST_OG_RESULT = null;
+
+function ogRecalc() {
+  const inputs = readOgInputs();
+  const r = computeOffgridOffer(DATA, inputs);
+  LAST_OG_RESULT = r;
+
+  const errorsCard = document.getElementById('ogErrorsCard');
+  if (r.errors && r.errors.length) {
+    errorsCard.style.display = 'block';
+    document.getElementById('ogErrorsList').innerHTML = r.errors.map(e => `<div>⚠ ${e}</div>`).join('');
+  } else {
+    errorsCard.style.display = 'none';
+  }
+  if (!r.totals) return; // اختيارات ناقصة (نادر - القوائم متعبية دايمًا)
+
+  const sym = DATA.meta.currencySymbol;
+  const clientNameVal = document.getElementById('ogClientName').value.trim();
+  const clientPhoneVal = document.getElementById('ogClientPhone').value.trim();
+  const unlocked = isAdmin || (clientNameVal !== '' && isValidPhone(clientPhoneVal));
+  document.getElementById('ogPriceGate').style.display = unlocked ? 'block' : 'none';
+  document.getElementById('ogPriceLockCard').style.display = unlocked ? 'none' : 'block';
+  if (!unlocked) return;
+
+  document.getElementById('ogSummaryBadge').textContent = `${r.inv.brand} ${r.inv.type} - ${r.batt.brand}`;
+  document.getElementById('ogFinalPriceOut').textContent = `${fmt(r.totals.finalPrice)} ${sym}`;
+  document.getElementById('ogBeforeDiscountOut').innerHTML =
+    r.totals.discount > 0 ? `<span class="strike">${fmt(r.totals.beforeDiscount)}</span>` : '';
+  document.getElementById('ogStatPanels').textContent = fmt(r.O2);
+  document.getElementById('ogStatBatteries').textContent = fmt(r.O6);
+  document.getElementById('ogStatStoredKWh').textContent = r.storedKWh.toFixed(1);
+
+  document.getElementById('ogSpecGrid').innerHTML = `
+    <div class="spec"><div class="k">جهد الانفرتر</div><div class="v">${r.inv.voltage}V</div></div>
+    <div class="spec"><div class="k">قدرة الانفرتر</div><div class="v">${r.inv.powerKW} KW</div></div>
+    <div class="spec"><div class="k">جهد البطارية</div><div class="v">${r.batt.voltage}V</div></div>
+    <div class="spec"><div class="k">سعة البطارية</div><div class="v">${r.batt.ah} AH</div></div>
+    <div class="spec"><div class="k">بطاريات بالسلسلة</div><div class="v">${fmt(r.O7)}</div></div>
+    <div class="spec"><div class="k">عدد السلاسل</div><div class="v">${fmt(r.O8)}</div></div>
+    <div class="spec"><div class="k">القدرة اللحظية القصوى</div><div class="v">${fmt(r.R2)} W</div></div>
+    <div class="spec"><div class="k">الاحتياج اليومي</div><div class="v">${fmt(r.R5)} Wh</div></div>
+    <div class="spec"><div class="k">إنتاج الألواح اليومي</div><div class="v">${fmt(r.O3)} Wh</div></div>
+    <div class="spec"><div class="k">القدرة المركبة</div><div class="v">${r.installedKW.toFixed(2)} KW</div></div>
+    <div class="spec"><div class="k">عدد الشاسيهات</div><div class="v">${fmt(r.steelQty)}</div></div>
+    <div class="spec"><div class="k">التوافق</div><div class="v" style="color:${r.designOkay ? 'var(--leaf)' : 'var(--danger)'};">${r.designOkay ? 'متوافق ✓' : 'غير متوافق ⚠'}</div></div>
+  `;
+
+  document.querySelector('#ogOfferTable tbody').innerHTML = r.offer.rows.map(row => `
+    <tr>
+      <td>${row.n}</td><td>${row.name}</td><td>${row.type}</td><td>${fmt(row.qty)}</td>
+      <td>${fmt(row.customerTotal)} ${sym}</td>
+    </tr>`).join('');
+
+  document.getElementById('ogTotalsBlock').innerHTML = `
+    <div class="line"><span>الإجمالي قبل الخصم</span><span>${fmt(r.totals.beforeDiscount)} ${sym}</span></div>
+    <div class="line"><span>الخصم</span><span>- ${fmt(r.totals.discount)} ${sym}</span></div>
+    <div class="line final"><span>الإجمالي النهائي</span><span>${fmt(r.totals.finalPrice)} ${sym}</span></div>
+  `;
+
+  document.getElementById('ogPaymentTerms').innerHTML = r.paymentTerms.map(t => `
+    <div class="switch-row"><div class="lbl">${t.label} <small>${Math.round(t.pct*100)}%</small></div><div class="num" style="font-family:var(--mono); font-weight:700;">${fmt(t.amount)} ${sym}</div></div>
+  `).join('');
+
+  const profitCard = document.getElementById('ogProfitCard');
+  if (isAdmin) {
+    profitCard.style.display = 'block';
+    const profit = r.totals.profit;
+    const marginPct = r.totals.finalPrice ? (profit / r.totals.finalPrice) * 100 : 0;
+    document.getElementById('ogProfitBlock').innerHTML = `
+      <div class="line"><span>إجمالي التكلفة</span><span>${fmt(r.totals.totalCost)} ${sym}</span></div>
+      <div class="line final"><span>صافي الربح</span><span>${fmt(profit)} ${sym}</span></div>
+      <div class="line"><span>هامش الربح</span><span>${marginPct.toFixed(1)}%</span></div>
+    `;
+  } else {
+    profitCard.style.display = 'none';
+  }
+}
+
+function buildOgQuoteFilename(r, inputs) {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const now = new Date();
+  const dateStr = `${String(now.getDate()).padStart(2,'0')}${months[now.getMonth()]}${now.getFullYear()}`;
+  const phaseSeg = inputs.phase === 'three' ? '3PH' : '1PH';
+  const invSeg = `${r.inv.brand}${r.inv.type}`.replace(/\s+/g, '');
+  const battSeg = `${r.batt.brand}${r.batt.ah}AH`;
+  const panelSeg = `${inputs.panelBrand}${inputs.panelPower}`;
+  const clientName = document.getElementById('ogClientName').value.trim() || 'Client';
+  const clientPhone = document.getElementById('ogClientPhone').value.trim();
+  const parts = ['QLOG', dateStr, phaseSeg, panelSeg, invSeg, battSeg, clientName, clientPhone]
+    .filter(p => p !== '')
+    .map(sanitizeFilenamePart);
+  return parts.join('-');
+}
+
+function buildOffgridQuoteRecord(r, inputs, quoteFilename) {
+  return {
+    id: quoteFilename,
+    type: 'offgrid',
+    savedAt: new Date().toISOString(),
+    clientName: document.getElementById('ogClientName').value.trim() || 'غير محدد',
+    clientPhone: document.getElementById('ogClientPhone').value.trim() || '',
+    phase: inputs.phase,
+    panelBrand: inputs.panelBrand,
+    panelPower: inputs.panelPower,
+    panelCount: r.O2,
+    inverterBrand: r.inv.brand,
+    inverterModel: r.inv.type,
+    batteryModel: `${r.batt.brand} ${r.batt.ah}AH-${r.batt.voltage}V`,
+    batteryCount: r.O6,
+    storedKWh: Number(r.storedKWh.toFixed(1)),
+    finalPrice: r.totals.finalPrice,
+    beforeDiscount: r.totals.beforeDiscount,
+    pricePerKW: Math.round(r.totals.pricePerKW),
+    offerRows: r.offer.rows.map(row => ({ n: row.n, name: row.name, type: row.type, qty: row.qty })),
+    paymentTerms: r.paymentTerms.map(t => ({ label: t.label, pct: t.pct, amount: t.amount }))
+  };
+}
+
+function ogPreparePrintAndPrint() {
+  const r = LAST_OG_RESULT;
+  if (!r || !r.totals) { toast('من فضلك أكمل بيانات الحسبة أولًا', 'err'); return; }
+  const sym = DATA.meta.currencySymbol;
+  const inputs = readOgInputs();
+
+  const quoteFilename = buildOgQuoteFilename(r, inputs);
+  document.getElementById('ogPqQuoteNo').textContent = quoteFilename;
+  document.getElementById('ogPqDate').textContent = new Date().toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('ogPqClient').textContent = document.getElementById('ogClientName').value || 'غير محدد';
+  document.getElementById('ogPqPhone').textContent = document.getElementById('ogClientPhone').value || 'غير محدد';
+  document.getElementById('ogPqPhase').textContent = inputs.phase === 'three' ? 'ثلاثي الطور' : 'أحادي الطور';
+  document.getElementById('ogPqPanels').textContent = `${r.O2} × ${inputs.panelBrand} ${inputs.panelPower}W`;
+
+  document.getElementById('ogPqSpecs').innerHTML = `
+    <div class="spec"><div class="k">الانفرتر</div><div class="v">${r.inv.brand} ${r.inv.type}</div></div>
+    <div class="spec"><div class="k">البطارية</div><div class="v">${r.batt.brand} ${r.batt.ah}AH × ${r.O6}</div></div>
+    <div class="spec"><div class="k">القدرة المخزنة</div><div class="v">${r.storedKWh.toFixed(1)} KWh</div></div>
+  `;
+
+  document.getElementById('ogPqOfferBody').innerHTML = r.offer.rows.map(row => `
+    <tr><td>${row.n}</td><td>${row.name}</td><td>${row.type}</td><td>${fmt(row.qty)}</td></tr>
+  `).join('');
+
+  document.getElementById('ogPqGrandTotalValue').textContent = `${fmt(r.totals.finalPrice)} ${sym}`;
+  document.getElementById('ogPqPayment').innerHTML = r.paymentTerms.map(t => `
+    <div class="row"><span>${t.label} (${Math.round(t.pct*100)}%)</span><span>${fmt(t.amount)} ${sym}</span></div>
+  `).join('');
+
+  logQuoteRecord(buildOffgridQuoteRecord(r, inputs, quoteFilename));
+
+  document.getElementById('printQuoteOG').classList.add('pq-active');
+  const prevTitle = document.title;
+  document.title = quoteFilename;
+  window.print();
+  window.addEventListener('afterprint', function restoreTitle() {
+    document.getElementById('printQuoteOG').classList.remove('pq-active');
+    document.title = prevTitle;
+    window.removeEventListener('afterprint', restoreTitle);
+  });
+}

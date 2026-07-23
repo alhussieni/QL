@@ -20,6 +20,7 @@
   </div>
   <nav>
     <button class="nav-btn active" data-view="calc">الحاسبة</button>
+    <button class="nav-btn" data-view="offgrid">أوف جريد</button>
     <button class="nav-btn" data-view="admin">لوحة الأدمن</button>
   </nav>
 </div>
@@ -46,7 +47,8 @@
           <div class="row2">
             <div class="field">
               <label>رقم الهاتف / واتساب للتواصل</label>
-              <input type="tel" id="clientPhone" placeholder="01xxxxxxxxx" inputmode="tel">
+              <input type="tel" id="clientPhone" placeholder="01xxxxxxxxx أو +XX..." inputmode="tel">
+              <small style="display:block; margin-top:5px; font-size:11px; color:var(--ink-faint);">للعملاء خارج مصر: اكتب الرقم بالكود الدولي، مثال +966501234567</small>
             </div>
             <div class="field">
               <label>القدرة المطلوبة (كيلوواط) <span class="hint">Requested KW</span></label>
@@ -215,6 +217,158 @@
           </div>
 
           <button class="btn ghost" id="printBtn" style="margin-top:6px;">🖨 طباعة / حفظ PDF</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= OFF-GRID VIEW ======================= -->
+  <section class="view" id="view-offgrid">
+    <div class="hero">
+      <div class="eyebrow">أوف جريد</div>
+      <h1>حاسبة أنظمة الطاقة الشمسية بالبطاريات (Off-Grid)</h1>
+      <p>احسب عدد الألواح وبنك البطاريات والانفرتر المناسب حسب استهلاكك اليومي، واحصل على عرض سعر فوري.</p>
+    </div>
+
+    <div class="grid">
+      <!-- RIGHT: INPUTS -->
+      <div>
+        <div class="card">
+          <h2><span class="num">1</span> بيانات العميل والمشروع</h2>
+          <div class="field">
+            <label>اسم العميل / المشروع</label>
+            <input type="text" id="ogClientName" placeholder="مثال: مزرعة السلام">
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>رقم الهاتف / واتساب للتواصل</label>
+              <input type="tel" id="ogClientPhone" placeholder="01xxxxxxxxx أو +XX..." inputmode="tel">
+            </div>
+            <div class="field">
+              <label>نوع التيار</label>
+              <select id="ogPhase">
+                <option value="single">أحادي الطور (Single Phase 220V)</option>
+                <option value="three">ثلاثي الطور (Three Phase)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">2</span> اللوح الشمسي</h2>
+          <div class="row2-golden">
+            <div class="field"><label>ماركة اللوح</label><select id="ogPanelBrand"></select></div>
+            <div class="field"><label>قدرة اللوح (واط)</label><select id="ogPanelPower"></select></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">3</span> الانفرتر (أوف جريد)</h2>
+          <div class="field"><label>الماركة والنوع</label><select id="ogInvSelect"></select></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">4</span> البطارية</h2>
+          <div class="field"><label>الموديل</label><select id="ogBattSelect"></select></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">5</span> ساعات الشمس ووقت التشغيل</h2>
+          <div class="row2">
+            <div class="field"><label>ساعات الشمس القصوى (PSH)</label><input type="number" id="ogPsh" step="0.1"></div>
+            <div class="field"><label>هامش أمان</label><input type="number" id="ogSafetyFactor" step="0.01"></div>
+          </div>
+          <div class="switch-row">
+            <div class="lbl">تشغيل نهارًا (مباشر على الألواح)</div>
+            <label class="switch"><input type="checkbox" id="ogMorningEnabled" checked><span class="track"></span><span class="thumb"></span></label>
+          </div>
+          <div class="switch-row">
+            <div class="lbl">تشغيل ليلاً (على البطاريات)</div>
+            <label class="switch"><input type="checkbox" id="ogNightEnabled" checked><span class="track"></span><span class="thumb"></span></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="num">6</span> الأحمال (الأجهزة المطلوب تشغيلها)</h2>
+          <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">اكتب عدد كل جهاز عندك بس - الباقي بيتحسب تلقائي.</p>
+          <div id="ogLoadsList"></div>
+        </div>
+
+        <details class="adv">
+          <summary>إعدادات متقدمة</summary>
+          <div class="adv-body">
+            <div class="row2">
+              <div class="field"><label>عدد ألواح إضافي يدوي</label><input type="number" id="ogManualPanelAdj" value="0"></div>
+              <div class="field"><label>استرينجات بطاريات إضافية</label><input type="number" id="ogExtraBatteryStrings" value="0"></div>
+            </div>
+            <div class="row2">
+              <div class="field"><label>عدد وحدات التركيب <span class="hint">افتراضي = نص عدد الشاسيهات</span></label><input type="number" id="ogInstallQtyOverride" placeholder="تلقائي"></div>
+              <div class="field"><label>خصم إضافي (مبلغ ثابت)</label><input type="number" id="ogExtraDiscount" value="0"></div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- LEFT: RESULTS -->
+      <div>
+        <div class="card" id="ogErrorsCard" style="display:none; border-color:rgba(226,100,90,.4);">
+          <h2 style="border:none; margin:0; color:var(--danger);">تنبيه</h2>
+          <div id="ogErrorsList" style="font-size:13px; color:var(--ink-dim);"></div>
+        </div>
+
+        <div class="card" id="ogPriceLockCard" style="text-align:center; padding:var(--sp-4) var(--sp-3);">
+          <div style="font-size:32px; margin-bottom:10px;">🔒</div>
+          <h2 style="border:none; margin:0 0 6px; padding:0; justify-content:center;">أدخل بياناتك عشان تشوف السعر</h2>
+          <p style="font-size:13px; color:var(--ink-dim); max-width:360px; margin:0 auto;">اكتب اسمك ورقم موبايلك في "بيانات العميل والمشروع"، وهيظهرلك السعر والتفاصيل كاملة فورًا.</p>
+        </div>
+
+        <div id="ogPriceGate" style="display:none;">
+          <div class="card summary-card">
+            <div class="summary-head">
+              <h2><span class="num">◆</span> ملخص النظام</h2>
+              <span class="badge sum-badge" id="ogSummaryBadge"></span>
+            </div>
+            <div class="summary-body">
+              <div class="summary-price">
+                <div class="lbl">الإجمالي النهائي</div>
+                <div class="amt" id="ogFinalPriceOut">0 ج.م</div>
+                <div class="sub"><span id="ogBeforeDiscountOut"></span></div>
+              </div>
+              <div class="summary-stats">
+                <div class="stat"><div class="v" id="ogStatPanels">-</div><div class="k">عدد الألواح</div></div>
+                <div class="stat"><div class="v" id="ogStatBatteries">-</div><div class="k">عدد البطاريات</div></div>
+                <div class="stat"><div class="v" id="ogStatStoredKWh">-</div><div class="k">KWh مخزنة</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2><span class="num">⚡</span> المواصفات الفنية</h2>
+            <div class="spec-grid" id="ogSpecGrid"></div>
+          </div>
+
+          <div class="card">
+            <h2><span class="num">$</span> تفاصيل عرض السعر</h2>
+            <div style="overflow-x:auto;">
+              <table class="offer" id="ogOfferTable">
+                <thead><tr><th>#</th><th>البند</th><th>النوع</th><th>الكمية</th><th>السعر</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="totals" id="ogTotalsBlock"></div>
+          </div>
+
+          <div class="card" id="ogProfitCard" style="display:none; border-color:rgba(45,150,90,.45); background:rgba(45,150,90,.06);">
+            <h2><span class="num">🔐</span> التكلفة والربح <small style="font-size:11px; font-weight:600; color:var(--ink-faint);">(يظهر للأدمن فقط)</small></h2>
+            <div class="totals" id="ogProfitBlock"></div>
+          </div>
+
+          <div class="card">
+            <h2><span class="num">%</span> شروط السداد</h2>
+            <div id="ogPaymentTerms"></div>
+          </div>
+
+          <button class="btn ghost" id="ogPrintBtn" style="margin-top:6px;">🖨 طباعة / حفظ PDF</button>
         </div>
       </div>
     </div>
@@ -474,6 +628,73 @@
         </div>
       </div>
 
+      <div class="card">
+        <h2><span class="num">🔋</span> أوف جريد - كتالوج الانفرترات</h2>
+        <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">الأسعار دي منقولة من ملف إكسل قديم - راجعها وحدّثها من هنا.</p>
+        <div class="tbl-wrap">
+          <table class="tbl-edit" id="ogInvTable">
+            <thead><tr><th>الماركة</th><th>النوع</th><th>الجهد V</th><th>القدرة KW</th><th>السعر (Price List)</th><th>نسبة الخصم</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button class="btn ghost small" id="addOgInvBtn" style="margin-top:10px;">+ إضافة انفرتر أوف جريد</button>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">🔋</span> أوف جريد - كتالوج البطاريات</h2>
+        <div class="tbl-wrap">
+          <table class="tbl-edit" id="ogBattTable">
+            <thead><tr><th>الماركة</th><th>الجهد V</th><th>السعة AH</th><th>DOD%</th><th>السعر (Price List)</th><th>نسبة الخصم</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button class="btn ghost small" id="addOgBattBtn" style="margin-top:10px;">+ إضافة بطارية</button>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">🔌</span> أوف جريد - قائمة الأحمال (الأجهزة)</h2>
+        <p style="font-size:12px; color:var(--ink-faint); margin-top:-8px;">دي القائمة اللي بتظهر للعميل يختار عدد كل جهاز عنده.</p>
+        <div class="tbl-wrap">
+          <table class="tbl-edit" id="ogLoadsTable">
+            <thead><tr><th>اسم الجهاز</th><th>القدرة (واط)</th><th>معامل التشغيل</th><th>ساعات ليلية</th><th>ساعات نهارية</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button class="btn ghost small" id="addOgLoadBtn" style="margin-top:10px;">+ إضافة جهاز</button>
+      </div>
+
+      <div class="card">
+        <h2><span class="num">≡</span> أوف جريد - ثوابت الحساب والتسعير</h2>
+        <div class="row3">
+          <div class="field"><label>ساعات الشمس الافتراضية (PSH)</label><input type="number" id="cfgOgPsh" step="0.1"></div>
+          <div class="field"><label>هامش الأمان الافتراضي</label><input type="number" id="cfgOgSafetyFactor" step="0.01"></div>
+          <div class="field"><label>ألواح إضافية افتراضية</label><input type="number" id="cfgOgExtraPanels"></div>
+        </div>
+        <div class="row3">
+          <div class="field"><label>ساعات شحن البطارية بالكامل</label><input type="number" id="cfgOgChargeSunHours" step="0.1"></div>
+          <div class="field"><label>هامش ربح اللوح (جنيه/واط)</label><input type="number" id="cfgOgPanelMarkup" step="0.01"></div>
+          <div class="field"><label>تكلفة الشاسيه/وحدة</label><input type="number" id="cfgOgSteelCost"></div>
+        </div>
+        <div class="row3">
+          <div class="field"><label>هامش ربح الشاسيه/وحدة</label><input type="number" id="cfgOgSteelMargin"></div>
+          <div class="field"><label>تكلفة متر الكابل</label><input type="number" id="cfgOgCableCost"></div>
+          <div class="field"><label>سعر متر الكابل للعميل</label><input type="number" id="cfgOgCableCustomer"></div>
+        </div>
+        <div class="row3">
+          <div class="field"><label>أمتار كابل لكل شاسيه</label><input type="number" id="cfgOgCableMetersPerSteel"></div>
+          <div class="field"><label>تكلفة الاكسسوارات (ثابت)</label><input type="number" id="cfgOgAccCost"></div>
+          <div class="field"><label>سعر الاكسسوارات للعميل</label><input type="number" id="cfgOgAccCustomer"></div>
+        </div>
+        <div class="row3">
+          <div class="field"><label>تكلفة النقل (ثابت)</label><input type="number" id="cfgOgTransportCost"></div>
+          <div class="field"><label>سعر النقل للعميل</label><input type="number" id="cfgOgTransportCustomer"></div>
+          <div class="field"><label>تكلفة التركيب/وحدة</label><input type="number" id="cfgOgInstallCost"></div>
+        </div>
+        <div class="row3">
+          <div class="field"><label>سعر التركيب للعميل/وحدة</label><input type="number" id="cfgOgInstallCustomer"></div>
+        </div>
+      </div>
+
       <button class="btn" id="saveGithubBtn2" style="margin-bottom:40px;">حفظ كل التعديلات على GitHub</button>
     </div>
   </section>
@@ -553,7 +774,61 @@
   </div>
 </div>
 
+<div id="printQuoteOG">
+  <img class="pq-letterhead-bg" src="letterhead.jpg" alt="">
+  <div class="pq-content">
+    <div class="pq-doc">
+      <b>عرض سعر - نظام أوف جريد (بطاريات)</b>
+      <div>رقم العرض: <span id="ogPqQuoteNo"></span></div>
+      <div>التاريخ: <span id="ogPqDate"></span></div>
+    </div>
+
+    <div class="pq-meta">
+      <div class="box">
+        <div class="k">العميل / المشروع</div>
+        <div class="v" id="ogPqClient">-</div>
+      </div>
+      <div class="box">
+        <div class="k">رقم الهاتف / واتساب</div>
+        <div class="v" id="ogPqPhone">-</div>
+      </div>
+      <div class="box">
+        <div class="k">نوع التيار</div>
+        <div class="v" id="ogPqPhase">-</div>
+      </div>
+      <div class="box">
+        <div class="k">عدد الألواح</div>
+        <div class="v" id="ogPqPanels">-</div>
+      </div>
+    </div>
+
+    <div class="pq-specs" id="ogPqSpecs"></div>
+
+    <table class="pq-table">
+      <thead>
+        <tr><th>#</th><th>البند</th><th>النوع</th><th>الكمية</th></tr>
+      </thead>
+      <tbody id="ogPqOfferBody"></tbody>
+    </table>
+
+    <div class="pq-grandtotal" id="ogPqGrandTotal">
+      <div class="k">السعر الإجمالي للعرض (غير شامل ض.ق.م)</div>
+      <div class="v" id="ogPqGrandTotalValue">-</div>
+    </div>
+
+    <div class="pq-payment">
+      <div class="title">شروط السداد</div>
+      <div id="ogPqPayment"></div>
+    </div>
+
+    <div class="pq-footer">
+      هذا العرض ساري لمدة 15 يوم من تاريخه، ولا يشمل ضريبة القيمة المضافة ما لم يذكر خلاف ذلك.
+    </div>
+  </div>
+</div>
+
 <script src="calc.js"></script>
+<script src="offgrid-calc.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -1543,5 +1543,745 @@
     "decreaseStrings": 0,
     "increaseInverterHP": 0,
     "extraDiscountPercent": 0
+  },
+  "offgrid": {
+    "psh": 6,
+    "safetyFactor": 1.1,
+    "extraPanels": 2,
+    "batteryChargeSunHours": 5.5,
+    "panelMarkupPerWatt": 0.5,
+    "steelCostPerUnit": 1200,
+    "steelMarginPerUnit": 300,
+    "cablesCostPerMeter": 50,
+    "cablesCustomerPerMeter": 65,
+    "cableMetersPerSteelUnit": 20,
+    "accessoriesCostFixed": 2000,
+    "accessoriesCustomerFixed": 2500,
+    "transportCostFixed": 3000,
+    "transportCustomerFixed": 2500,
+    "installCostPerUnit": 200,
+    "installCustomerPerUnit": 500,
+    "inverters": [
+      {
+        "brand": "Must",
+        "type": "PWM / 1-KW",
+        "voltage": 12,
+        "powerKW": 1,
+        "listPrice": 7091,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "PWM / 2-KW",
+        "voltage": 24,
+        "powerKW": 2,
+        "listPrice": 8630,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "PWM / 3-KW",
+        "voltage": 24,
+        "powerKW": 3,
+        "listPrice": 10194,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "PWM / 5-KW",
+        "voltage": 48,
+        "powerKW": 5,
+        "listPrice": 19394,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "MPPT / 1-KW",
+        "voltage": 12,
+        "powerKW": 1,
+        "listPrice": 9467,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "MPPT / 2-KW",
+        "voltage": 24,
+        "powerKW": 2,
+        "listPrice": 10182,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "MPPT 60A / 3-KW",
+        "voltage": 24,
+        "powerKW": 3,
+        "listPrice": 12082,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "MPPT 80A / 3-KW",
+        "voltage": 24,
+        "powerKW": 3,
+        "listPrice": 15309,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "MPPT / 5-KW",
+        "voltage": 48,
+        "powerKW": 5,
+        "listPrice": 20485,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "Pro / 3-KW",
+        "voltage": 48,
+        "powerKW": 3,
+        "listPrice": 17782,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "Pro 100A / 5.2-KW",
+        "voltage": 48,
+        "powerKW": 5.2,
+        "listPrice": 23249,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "EXP / 4-KW",
+        "voltage": 24,
+        "powerKW": 4,
+        "listPrice": 19758,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "EXP / 6-KW",
+        "voltage": 48,
+        "powerKW": 6,
+        "listPrice": 26444,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "EXP / 6-KW-pro",
+        "voltage": 48,
+        "powerKW": 6,
+        "listPrice": 27944,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "EXP / 8-KW",
+        "voltage": 48,
+        "powerKW": 8,
+        "listPrice": 37700,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "EXP / 10-KW",
+        "voltage": 48,
+        "powerKW": 10,
+        "listPrice": 39999,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "EXP / 12-KW",
+        "voltage": 48,
+        "powerKW": 12,
+        "listPrice": 45999,
+        "discount": 0.1
+      },
+      {
+        "brand": "Must",
+        "type": "MPPT 3PH / 12-KW",
+        "voltage": 48,
+        "powerKW": 12,
+        "listPrice": 143636,
+        "discount": 0.1
+      },
+      {
+        "brand": "VEICHI",
+        "type": "SIS4 / 1-KW",
+        "voltage": 12,
+        "powerKW": 1,
+        "listPrice": 8150,
+        "discount": 0.12
+      },
+      {
+        "brand": "VEICHI",
+        "type": "SIS2 / 3-KW",
+        "voltage": 24,
+        "powerKW": 3,
+        "listPrice": 12650,
+        "discount": 0.12
+      },
+      {
+        "brand": "VEICHI",
+        "type": "SIS4 / 3.2-KW",
+        "voltage": 24,
+        "powerKW": 3.2,
+        "listPrice": 14080,
+        "discount": 0.12
+      },
+      {
+        "brand": "VEICHI",
+        "type": "SIS H / 3-KW",
+        "voltage": 24,
+        "powerKW": 3,
+        "listPrice": 18700,
+        "discount": 0.12
+      },
+      {
+        "brand": "VEICHI",
+        "type": "SIS H / 5-KW",
+        "voltage": 48,
+        "powerKW": 5,
+        "listPrice": 22900,
+        "discount": 0.12
+      },
+      {
+        "brand": "VEICHI",
+        "type": "SIS V / 6.2-KW",
+        "voltage": 48,
+        "powerKW": 6.2,
+        "listPrice": 25575,
+        "discount": 0.12
+      },
+      {
+        "brand": "VEICHI",
+        "type": "SIS V / 8.2-KW",
+        "voltage": 48,
+        "powerKW": 8.2,
+        "listPrice": 39600,
+        "discount": 0.12
+      },
+      {
+        "brand": "VEICHI",
+        "type": "SIS V / 10.2-KW",
+        "voltage": 48,
+        "powerKW": 10.2,
+        "listPrice": 55000,
+        "discount": 0.12
+      },
+      {
+        "brand": "VEICHI",
+        "type": "VLT",
+        "voltage": 48,
+        "powerKW": 15,
+        "listPrice": 150000,
+        "discount": 0.12
+      }
+    ],
+    "batteries": [
+      {
+        "brand": "JYC",
+        "voltage": 12,
+        "ah": 100,
+        "dod": 0.5,
+        "listPrice": 10500,
+        "discount": 0
+      },
+      {
+        "brand": "JYC",
+        "voltage": 12,
+        "ah": 150,
+        "dod": 0.5,
+        "listPrice": 12500,
+        "discount": 0
+      },
+      {
+        "brand": "JYC",
+        "voltage": 12,
+        "ah": 200,
+        "dod": 0.5,
+        "listPrice": 16500,
+        "discount": 0
+      },
+      {
+        "brand": "NewMax",
+        "voltage": 12,
+        "ah": 100,
+        "dod": 0.5,
+        "listPrice": 10000,
+        "discount": 0
+      },
+      {
+        "brand": "NewMax",
+        "voltage": 12,
+        "ah": 150,
+        "dod": 0.5,
+        "listPrice": 13000,
+        "discount": 0
+      },
+      {
+        "brand": "NewMax",
+        "voltage": 12,
+        "ah": 200,
+        "dod": 0.5,
+        "listPrice": 15000,
+        "discount": 0
+      },
+      {
+        "brand": "VEICHI_OFG",
+        "voltage": 12,
+        "ah": 100,
+        "dod": 0.5,
+        "listPrice": 10000,
+        "discount": 0.1
+      },
+      {
+        "brand": "VEICHI_OFG",
+        "voltage": 12,
+        "ah": 150,
+        "dod": 0.5,
+        "listPrice": 13000,
+        "discount": 0.1
+      },
+      {
+        "brand": "VEICHI_OFG",
+        "voltage": 12,
+        "ah": 200,
+        "dod": 0.5,
+        "listPrice": 15000,
+        "discount": 0.1
+      },
+      {
+        "brand": "VCLB",
+        "voltage": 48,
+        "ah": 100,
+        "dod": 0.9,
+        "listPrice": 50000,
+        "discount": 0.1
+      },
+      {
+        "brand": "VCLB",
+        "voltage": 48,
+        "ah": 200,
+        "dod": 0.9,
+        "listPrice": 100000,
+        "discount": 0.1
+      },
+      {
+        "brand": "SAKO",
+        "voltage": 24,
+        "ah": 100,
+        "dod": 0.9,
+        "listPrice": 29000,
+        "discount": 0.1
+      },
+      {
+        "brand": "SAKO",
+        "voltage": 24,
+        "ah": 200,
+        "dod": 0.9,
+        "listPrice": 50000,
+        "discount": 0.1
+      },
+      {
+        "brand": "SAKO",
+        "voltage": 24,
+        "ah": 280,
+        "dod": 0.9,
+        "listPrice": 70000,
+        "discount": 0.1
+      },
+      {
+        "brand": "SAKO",
+        "voltage": 48,
+        "ah": 100,
+        "dod": 0.9,
+        "listPrice": 50000,
+        "discount": 0.1
+      },
+      {
+        "brand": "SAKO",
+        "voltage": 48,
+        "ah": 200,
+        "dod": 0.9,
+        "listPrice": 95000,
+        "discount": 0.1
+      },
+      {
+        "brand": "SAKO",
+        "voltage": 48,
+        "ah": 300,
+        "dod": 0.9,
+        "listPrice": 130000,
+        "discount": 0.1
+      },
+      {
+        "brand": "SAKO",
+        "voltage": 48,
+        "ah": 600,
+        "dod": 0.9,
+        "listPrice": 225000,
+        "discount": 0.1
+      },
+      {
+        "brand": "SAKO",
+        "voltage": 12,
+        "ah": 100,
+        "dod": 0.5,
+        "listPrice": 11500,
+        "discount": 0.1
+      },
+      {
+        "brand": "SAKO",
+        "voltage": 12,
+        "ah": 150,
+        "dod": 0.5,
+        "listPrice": 13500,
+        "discount": 0.1
+      },
+      {
+        "brand": "SAKO",
+        "voltage": 12,
+        "ah": 200,
+        "dod": 0.5,
+        "listPrice": 14500,
+        "discount": 0.1
+      },
+      {
+        "brand": "MUSTLP",
+        "voltage": 12,
+        "ah": 100,
+        "dod": 0.8,
+        "listPrice": 12150,
+        "discount": 0.1
+      },
+      {
+        "brand": "MUSTLP",
+        "voltage": 12,
+        "ah": 200,
+        "dod": 0.8,
+        "listPrice": 22300,
+        "discount": 0.1
+      },
+      {
+        "brand": "MUSTLP",
+        "voltage": 24,
+        "ah": 100,
+        "dod": 0.8,
+        "listPrice": 28300,
+        "discount": 0.1
+      },
+      {
+        "brand": "MUSTLP",
+        "voltage": 24,
+        "ah": 200,
+        "dod": 0.8,
+        "listPrice": 52950,
+        "discount": 0.1
+      },
+      {
+        "brand": "MUSTLP",
+        "voltage": 48,
+        "ah": 100,
+        "dod": 0.8,
+        "listPrice": 47500,
+        "discount": 0.1
+      },
+      {
+        "brand": "MUSTLP",
+        "voltage": 48,
+        "ah": 200,
+        "dod": 0.8,
+        "listPrice": 93950,
+        "discount": 0.1
+      },
+      {
+        "brand": "MUSTLP",
+        "voltage": 48,
+        "ah": 300,
+        "dod": 0.8,
+        "listPrice": 120900,
+        "discount": 0.1
+      },
+      {
+        "brand": "NPP",
+        "voltage": 12,
+        "ah": 100,
+        "dod": 0.6,
+        "listPrice": 9750,
+        "discount": 0.1
+      },
+      {
+        "brand": "NPP",
+        "voltage": 12,
+        "ah": 150,
+        "dod": 0.6,
+        "listPrice": 12500,
+        "discount": 0.1
+      },
+      {
+        "brand": "NPP",
+        "voltage": 12,
+        "ah": 200,
+        "dod": 0.6,
+        "listPrice": 14500,
+        "discount": 0.1
+      },
+      {
+        "brand": "Sinopoly",
+        "voltage": 12,
+        "ah": 100,
+        "dod": 0.8,
+        "listPrice": 12150,
+        "discount": 0.15
+      },
+      {
+        "brand": "Sinopoly",
+        "voltage": 12,
+        "ah": 200,
+        "dod": 0.8,
+        "listPrice": 22300,
+        "discount": 0.15
+      },
+      {
+        "brand": "Sinopoly",
+        "voltage": 24,
+        "ah": 100,
+        "dod": 0.8,
+        "listPrice": 28300,
+        "discount": 0.15
+      },
+      {
+        "brand": "Sinopoly",
+        "voltage": 24,
+        "ah": 200,
+        "dod": 0.8,
+        "listPrice": 52950,
+        "discount": 0.15
+      },
+      {
+        "brand": "Sinopoly",
+        "voltage": 48,
+        "ah": 100,
+        "dod": 0.8,
+        "listPrice": 47500,
+        "discount": 0.15
+      },
+      {
+        "brand": "Sinopoly",
+        "voltage": 48,
+        "ah": 200,
+        "dod": 0.8,
+        "listPrice": 93950,
+        "discount": 0.15
+      },
+      {
+        "brand": "Sinopoly",
+        "voltage": 48,
+        "ah": 314,
+        "dod": 0.8,
+        "listPrice": 120900,
+        "discount": 0.15
+      }
+    ],
+    "loads": [
+      {
+        "name": "لمبة - LED Light",
+        "watt": 10,
+        "runningFactor": 0.5,
+        "nightHours": 19,
+        "dayHours": 5
+      },
+      {
+        "name": "DVR/ NVR",
+        "watt": 25,
+        "runningFactor": 1,
+        "nightHours": 19,
+        "dayHours": 5
+      },
+      {
+        "name": "charger/router",
+        "watt": 15,
+        "runningFactor": 1,
+        "nightHours": 19,
+        "dayHours": 5
+      },
+      {
+        "name": "Camera",
+        "watt": 10,
+        "runningFactor": 1,
+        "nightHours": 19,
+        "dayHours": 5
+      },
+      {
+        "name": "Laptop",
+        "watt": 65,
+        "runningFactor": 1,
+        "nightHours": 0,
+        "dayHours": 8
+      },
+      {
+        "name": "مروحة",
+        "watt": 70,
+        "runningFactor": 0.5,
+        "nightHours": 6,
+        "dayHours": 4
+      },
+      {
+        "name": "شفاط مطبخ",
+        "watt": 75,
+        "runningFactor": 1,
+        "nightHours": 0,
+        "dayHours": 2
+      },
+      {
+        "name": "تلفاز LCD-CCTV",
+        "watt": 60,
+        "runningFactor": 1,
+        "nightHours": 19,
+        "dayHours": 5
+      },
+      {
+        "name": "تلفاز LCD",
+        "watt": 80,
+        "runningFactor": 1,
+        "nightHours": 3,
+        "dayHours": 3
+      },
+      {
+        "name": "ثلاجة",
+        "watt": 175,
+        "runningFactor": 0.8,
+        "nightHours": 18,
+        "dayHours": 6
+      },
+      {
+        "name": "كشاف",
+        "watt": 200,
+        "runningFactor": 1,
+        "nightHours": 12,
+        "dayHours": 0
+      },
+      {
+        "name": "فريزر",
+        "watt": 300,
+        "runningFactor": 0.8,
+        "nightHours": 18,
+        "dayHours": 6
+      },
+      {
+        "name": "موتور 1 حصان",
+        "watt": 740,
+        "runningFactor": 1,
+        "nightHours": 2,
+        "dayHours": 0.25
+      },
+      {
+        "name": "موتور 1 حصان -220",
+        "watt": 740,
+        "runningFactor": 1,
+        "nightHours": 7,
+        "dayHours": 5
+      },
+      {
+        "name": "microwave",
+        "watt": 1000,
+        "runningFactor": 1,
+        "nightHours": 1,
+        "dayHours": 1
+      },
+      {
+        "name": "شفاط -عنبر دواجن",
+        "watt": 1100,
+        "runningFactor": 0.6,
+        "nightHours": 14,
+        "dayHours": 10
+      },
+      {
+        "name": "موتور 1.5 حصان",
+        "watt": 1100,
+        "runningFactor": 1,
+        "nightHours": 14,
+        "dayHours": 10
+      },
+      {
+        "name": "موتور غاطس",
+        "watt": 1100,
+        "runningFactor": 1,
+        "nightHours": 0.5,
+        "dayHours": 2
+      },
+      {
+        "name": "AC 1.5HP",
+        "watt": 1100,
+        "runningFactor": 0.75,
+        "nightHours": 8,
+        "dayHours": 8
+      },
+      {
+        "name": "هيتر",
+        "watt": 9000,
+        "runningFactor": 1,
+        "nightHours": 0,
+        "dayHours": 2
+      },
+      {
+        "name": "غسالة",
+        "watt": 1500,
+        "runningFactor": 1,
+        "nightHours": 0,
+        "dayHours": 2
+      },
+      {
+        "name": "AC 2.5 HP",
+        "watt": 1800,
+        "runningFactor": 0.5,
+        "nightHours": 8,
+        "dayHours": 8
+      },
+      {
+        "name": "AC 3 HP",
+        "watt": 2200,
+        "runningFactor": 0.5,
+        "nightHours": 8,
+        "dayHours": 8
+      },
+      {
+        "name": "Motor 5.5HP",
+        "watt": 4000,
+        "runningFactor": 1,
+        "nightHours": 1,
+        "dayHours": 0
+      },
+      {
+        "name": "Switch POE",
+        "watt": 120,
+        "runningFactor": 0.5,
+        "nightHours": 18,
+        "dayHours": 6
+      },
+      {
+        "name": "Nano M5",
+        "watt": 8,
+        "runningFactor": 1,
+        "nightHours": 18,
+        "dayHours": 6
+      },
+      {
+        "name": "PRINTER LASER",
+        "watt": 300,
+        "runningFactor": 0.5,
+        "nightHours": 0,
+        "dayHours": 2
+      },
+      {
+        "name": "CASH MACHINE",
+        "watt": 80,
+        "runningFactor": 0.5,
+        "nightHours": 0,
+        "dayHours": 1
+      }
+    ]
   }
 }

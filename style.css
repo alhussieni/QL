@@ -388,13 +388,13 @@ table.offer tfoot td{padding-top:12px; font-weight:800;}
   .hero h1{font-size:var(--fs-hero-mobile);}
 }
 
-#printQuote{ display:none; }
+#printQuote, #printQuoteOG{ display:none; }
 
 @media print{
   @page{ size:A4; margin:0; }
   html, body{ background:#fff !important; margin:0; padding:0; }
   .topbar, .wrap, .footer, .toast{ display:none !important; }
-  #printQuote{
+  #printQuote.pq-active, #printQuoteOG.pq-active{
     display:block !important;
     position:relative;
     width:210mm;
